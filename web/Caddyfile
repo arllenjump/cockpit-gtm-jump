@@ -1,0 +1,11 @@
+# Produção no Railway: serve o build do React e repassa /api para o serviço api pela rede interna.
+:{$PORT:8080} {
+	handle /api/* {
+		reverse_proxy {$API_INTERNAL_URL}
+	}
+	handle {
+		root * dist
+		try_files {path} /index.html
+		file_server
+	}
+}

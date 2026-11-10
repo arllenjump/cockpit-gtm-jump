@@ -1,0 +1,22 @@
+[project]
+name = "cockpit-gtm-jump-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn[standard]==0.34.2",
+  "sqlalchemy==2.0.40",
+  "psycopg[binary]==3.2.6",
+  "alembic==1.15.2",
+  "msal==1.32.3",
+  "itsdangerous==2.2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5", "httpx==0.28.1"]
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
