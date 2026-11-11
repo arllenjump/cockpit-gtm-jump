@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/* Identidade Jump (Figma "Identidade Jump", página Cores e Tipografia de Apoio) */
+@theme {
+  --color-grafite: #2d353d;
+  --color-grafite-escuro: #181e23;
+  --color-laranja: #ff8000;
+  --color-laranja-escuro: #dd6c00;
+  --color-laranja-claro: #f8af5e;
+  --font-titulo: "Kanit", ui-sans-serif, system-ui, sans-serif;
+}
