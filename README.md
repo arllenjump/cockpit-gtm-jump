@@ -21,11 +21,11 @@ Para o login funcionar localmente, preencha `MICROSOFT_CLIENT_ID`, `MICROSOFT_CL
 
 ### Sem Docker
 
-Com um Postgres rodando e `DATABASE_URL` definido:
+Com [uv](https://docs.astral.sh/uv/), um Postgres rodando e `DATABASE_URL` definido:
 
 ```bash
-cd api && python -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/alembic upgrade head && .venv/bin/uvicorn app.main:app --reload
+cd api && uv sync --extra dev
+uv run alembic upgrade head && uv run uvicorn app.main:app --reload
 ```
 
 ```bash
@@ -35,17 +35,17 @@ cd web && npm install && npm run dev
 ### Testes
 
 ```bash
-cd api && .venv/bin/pytest
+cd api && uv run pytest
 ```
 
 ## Deploy (Railway)
 
-Projeto próprio com três serviços, publicados a partir da `main`:
+Projeto `cockpit-gtm-jump`, publicado a partir da `main`, com build pelo Railpack (sem Dockerfile), como os outros projetos da Jump.
 
-| Serviço | Pasta raiz | Variáveis principais |
-| --- | --- | --- |
-| Postgres | (banco do Railway) | |
-| api | `api/` | as do `.env.example`, com `DATABASE_URL=${{Postgres.DATABASE_URL}}` e `APP_URL` = domínio público do web |
-| web | `web/` | `API_INTERNAL_URL=http://api.railway.internal:8000` |
+| Serviço | Pasta raiz | Build e início | Variáveis principais |
+| --- | --- | --- | --- |
+| Postgres | (banco do Railway) | | |
+| api | `api/` | Railpack (uv); pré-deploy `alembic upgrade head`; início `uvicorn` | as do `.env.example`, com `DATABASE_URL=${{Postgres.DATABASE_URL}}` e `APP_URL=https://cockpit.jump.tec.br` |
+| web | `web/` | Railpack (Vite), servido pelo Caddy com o `web/Caddyfile` | `API_INTERNAL_URL=http://api.railway.internal:8000` |
 
-Só o `web` tem domínio público; ele repassa `/api/*` para a `api` pela rede interna.
+Só o `web` é público (`cockpit.jump.tec.br`); ele repassa `/api/*` para a `api` pela rede interna. A URL de retorno do login é `https://cockpit.jump.tec.br/api/auth/callback`.

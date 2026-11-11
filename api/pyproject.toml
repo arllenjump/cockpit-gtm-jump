@@ -15,8 +15,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest==8.3.5", "httpx==0.28.1"]
 
-[tool.setuptools]
-packages = ["app"]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
