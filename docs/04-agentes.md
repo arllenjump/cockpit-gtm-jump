@@ -1,0 +1,64 @@
+# Agentes e auditoria
+
+## Regras comuns a todos os agentes
+- Português do Brasil.
+- Nunca usar travessão (—).
+- Nunca citar nome de cliente da Jump. Provas permitidas: mais de 60 clientes, mais de 600 profissionais, ISO 27001, 27701, 42001, 9001 e 14001, prêmio Negócios em Expansão 2025 da Exame, AWS Partner Network.
+- Não inventar números, nomes de clientes ou ferramentas. Quando faltar dado, dizer que falta.
+- Saída sempre em JSON no formato pedido, sem texto fora dele.
+
+## Agente de estudo (fase 1)
+Entrada: briefing, dados do martech-monitor (perfil, brief de 60 dias, concorrentes, sinais, oportunidades, temas ativos) e a contagem de contas aderentes do ICP Jump.
+
+Saída:
+```json
+{
+  "mercado": "resumo do mercado para este produto",
+  "concorrentes": [{ "nome": "", "movimento": "", "implicacao": "" }],
+  "oportunidades": [{ "titulo": "", "porque": "", "impacto": "baixo|medio|alto" }],
+  "riscos": [""],
+  "perguntas_em_aberto": [""],
+  "fontes": { "lidas": [""], "ausentes": [""] }
+}
+```
+
+## Agente de contrato (fase 2)
+Entrada: briefing, estudo aprovado, resumo das contas do ICP Jump (setores, portes, sinais mais frequentes).
+
+Saída:
+```json
+{
+  "clausulas": [
+    { "key": "icp", "estrategia": "", "execucao": "" }
+  ],
+  "testes": [
+    {
+      "codigo": "H1",
+      "hipotese": "",
+      "caminho_a": "",
+      "caminho_b": "",
+      "sinal_rapido": "",
+      "sinal_lento": "",
+      "faixa_prevista": "a calibrar com o histórico",
+      "regra": "",
+      "status": "ativa|na_fila"
+    }
+  ]
+}
+```
+As 10 chaves estão em `00-contexto.md`. No máximo 2 testes com status `ativa`.
+
+## Auditoria
+Duas camadas.
+
+### Camada 1: regras fixas, em código e com testes
+1. Cláusula com estratégia ou execução vazia: `ajustar`.
+2. Texto com travessão: `ajustar`.
+3. Texto com nome da lista de clientes bloqueados: `conflito`.
+4. Cláusula `sucesso` sem métrica por conta: `conflito`.
+5. Cláusula `categoria` vazia em produto de nova categoria (RadarAI, Adoption AI): `conflito`.
+6. Conteúdo de avaliação (business case, comparativo, compliance) marcado como atrás de formulário: `ajustar`.
+7. Mais de 2 testes ativos: `conflito`.
+
+### Camada 2: auditoria por IA, opcional
+Lê o contrato inteiro e aponta incoerências entre cláusulas (por exemplo, público diferente do ICP, ou KPI que não mede a hipótese). Devolve veredito e nota por cláusula. Nunca sobrescreve um `conflito` da camada 1.
