@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import type { Usuario } from "./App";
 import Contas from "./Contas";
+import Lancamentos from "./Lancamentos";
 import { aplicarTema, type Tema } from "./tema";
 
 const PAGINAS = [
@@ -85,7 +86,8 @@ export default function Layout({ usuario }: { usuario: Usuario }) {
         <Routes>
           <Route index element={<EmBreve nome="Início" />} />
           <Route path="contas" element={<Contas />} />
-          {PAGINAS.filter((p) => p.caminho !== "/contas").map((p) => (
+          <Route path="lancamentos" element={<Lancamentos />} />
+          {PAGINAS.filter((p) => !["/contas", "/lancamentos"].includes(p.caminho)).map((p) => (
             <Route key={p.caminho} path={p.caminho.slice(1)} element={<EmBreve nome={p.nome} />} />
           ))}
         </Routes>
