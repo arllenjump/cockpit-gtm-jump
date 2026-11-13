@@ -282,7 +282,7 @@ def gerar_contrato(lancamento_id: int):
     registrar = registrador(agente_contrato.AGENTE, "gerar_contrato", {"launch_id": lancamento_id, "study_id": e["id"]}, logs)
 
     try:
-        contrato = agente_contrato.gerar(contexto, registrar)
+        contrato = agente_contrato.gerar(contexto, registrar, lanc["slug"])
     except agente_contrato.ContratoInvalido as erro:
         raise HTTPException(status_code=422, detail=f"O contrato não passou na checagem depois de duas tentativas: {erro}")
     except anthropic.APIError as erro:

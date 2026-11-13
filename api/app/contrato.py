@@ -54,6 +54,21 @@ ESQUEMA = {
 }
 
 # Os 10 itens do contrato (docs/00-contexto.md): estratégia e execução de cada chave.
+# Apostas iniciais por produto (docs/04-agentes.md, "Apostas iniciais do OPT-3").
+APOSTAS_INICIAIS = {
+    "opt3": [
+        {"codigo": "H1", "hipotese": "Para o CFO, a dor de custo engaja mais que governança",
+         "caminho_a": "Custo da fatura de nuvem", "caminho_b": "Governança e controle",
+         "sinal_rapido": "CTR e engajamento por conta", "sinal_lento": "Contas que viram SQL", "status": "ativa"},
+        {"codigo": "H2", "hipotese": "O primeiro contato rende mais pelo CFO do que pelo CTO",
+         "caminho_a": "Sequência pelo CFO", "caminho_b": "Sequência pelo CTO ou Diretor de TI",
+         "sinal_rapido": "Taxa de resposta", "sinal_lento": "SQLs aceitos", "status": "ativa"},
+        {"codigo": "H3", "hipotese": "Oferta de entrada sem reunião converte mais que pedir conversa",
+         "caminho_a": "Material ou diagnóstico sem reunião", "caminho_b": "Falar com especialista",
+         "sinal_rapido": "Conversão do anúncio", "sinal_lento": "Contas que vão à reunião", "status": "na_fila"},
+    ],
+}
+
 ITENS = """icp: ICP | Filtros de conta e lista-alvo
 comite: Comitê de compra por função | Kit de consenso por função
 categoria: Justificativa da categoria | Conteúdo aberto de categoria e business case
@@ -79,6 +94,7 @@ Regras obrigatórias:
 - A execução da cláusula sucesso traz métricas por conta (escreva "por conta").
 - Conteúdo de avaliação (business case, comparativo, compliance) fica aberto, nunca atrás de formulário ou cadastro.
 - Plano de testes: no máximo 2 testes com status ativa e no máximo 1 na_fila. Códigos H1, H2, H3. Em faixa_prevista escreva "a calibrar com o histórico".
+- Se houver apostas iniciais, parta delas: mantenha os códigos e os status e só mude uma aposta se o estudo aprovado justificar, dizendo o motivo na própria hipótese.
 - Se houver ressalva do marketing sobre o estudo, leve em conta.
 - Responda só com o JSON no formato pedido."""
 
@@ -114,10 +130,12 @@ def validar(contrato: dict) -> list[str]:
     return problemas
 
 
-def gerar(contexto: dict, registrar) -> dict:
+def gerar(contexto: dict, registrar, produto: str = "opt3") -> dict:
     """`contexto`: produto, briefing, estudo aprovado e ressalva. Uma nova tentativa se falhar; depois ContratoInvalido."""
     modelo = env("CLAUDE_MODEL", "claude-sonnet-5-5")
     entrada = {**contexto, "resumo_das_contas": resumo_contas()}
+    if produto in APOSTAS_INICIAIS:
+        entrada["apostas_iniciais"] = APOSTAS_INICIAIS[produto]
     entrada_json = json.dumps(entrada, ensure_ascii=False)
     corpus = SISTEMA + "\n" + entrada_json
     mensagens = [{"role": "user", "content": f"Escreva o contrato de GTM da fase 2 para este lançamento.\n\n{entrada_json}"}]
