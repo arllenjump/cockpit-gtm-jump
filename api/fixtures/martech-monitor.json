@@ -1,0 +1,391 @@
+{
+  "simulacao": true,
+  "aviso": "Fotografia das respostas reais do martech-monitor em 13/11/2026, lida pelo conector do Claude. Usada enquanto o cockpit não tem a chave própria do servidor. Descrições resumidas.",
+  "respostas": {
+    "jump_get_profile": {
+      "profile": {
+        "id": 1,
+        "name": "Jump",
+        "description": "Jump Label Solutions — consultoria/agência brasileira de dados e IA, atuando em arquitetura de dados, governança e big data. Possui produtos próprios de IA aplicada (não são concorrentes, são IP interno): OPT-3 (FinOps de IA), RadarAI, NautilusIQ (índice de maturidade em IA governada), MigrateMind (migração de legado/dados), Tractix, Alpha.AI, TaxFlow e jOffice.",
+        "site": "jumplabel.com.br",
+        "hq": "São Paulo, SP",
+        "founded_year": null,
+        "updated_at": "2026-09-28T17:54:17"
+      }
+    },
+    "jump_get_brief": {
+      "window_days": 60,
+      "jump_profile": {
+        "id": 1,
+        "name": "Jump",
+        "description": "Jump Label Solutions — consultoria/agência brasileira de dados e IA, atuando em arquitetura de dados, governança e big data. Possui produtos próprios de IA aplicada (não são concorrentes, são IP interno): OPT-3 (FinOps de IA), RadarAI, NautilusIQ (índice de maturidade em IA governada), MigrateMind (migração de legado/dados), Tractix, Alpha.AI, TaxFlow e jOffice.",
+        "site": "jumplabel.com.br",
+        "hq": "São Paulo, SP",
+        "founded_year": null,
+        "updated_at": "2026-09-28T17:54:17"
+      },
+      "jump_competitor_signals": [
+        {
+          "id": 5,
+          "competitor_name": "stefanini",
+          "signal_type": "market_note",
+          "title": "Stefanini cresce 20% no trimestre puxado por IA, dados e cloud",
+          "description": "Crescimento de receita no primeiro trimestre de 2026, puxado por demanda de projetos de IA, dados e cloud.",
+          "source_url": "https://businessmoment.com.br/grupo-stefanini-receita-ia-primeiro-trimestre-2026/",
+          "signal_date": "2026-10-13",
+          "momentum": "alto"
+        },
+        {
+          "id": 3,
+          "competitor_name": "indicium",
+          "signal_type": "acquisition",
+          "title": "Indicium funde com Mesh-AI e vira consultoria global de dados e IA",
+          "description": "Fusão com a britânica Mesh-AI, criando a Indicium AI, com presença nas Américas e Europa.",
+          "source_url": "https://www.acate.com.br/noticias/fusao-indicium-e-empresa-britanica-mesh-ai/",
+          "signal_date": "2026-10-05",
+          "momentum": "alto"
+        },
+        {
+          "id": 4,
+          "competitor_name": "objective",
+          "signal_type": "acquisition",
+          "title": "Objective adquire Eleflow e reforça oferta de dados e IA",
+          "description": "Aquisição da Eleflow, que passa a operar como unidade de negócio de Data e AI.",
+          "source_url": "https://www.prnewswire.com/br/comunicados-para-a-imprensa/objective-anuncia-aquisicao-estrategica-da-eleflow-e-fortalece-atuacao-em-dados--ia-302495791.html",
+          "signal_date": "2026-10-05",
+          "momentum": "alto"
+        },
+        {
+          "id": 2,
+          "competitor_name": "objective",
+          "signal_type": "product_launch",
+          "title": "Objective lança 'Maturity Card Game'",
+          "description": "Ferramenta de diagnóstico de maturidade em dados e IA para empresas.",
+          "source_url": null,
+          "signal_date": "2026-09-28",
+          "momentum": "medio"
+        }
+      ],
+      "jump_open_opportunities": [
+        {
+          "id": 3,
+          "title": "Topo de funil GenAI definicional",
+          "description": "Maior demanda do mapa de oportunidades; ponte de conteúdo e lead gen para MLOps e Data Mesh.",
+          "related_competitor": null,
+          "status": "open",
+          "impact": "alto"
+        },
+        {
+          "id": 2,
+          "title": "Índice de Maturidade em IA Governada (NautilusIQ)",
+          "description": "Maior alavanca de citação/PR identificada; whitespace no Brasil.",
+          "related_competitor": "objective",
+          "status": "open",
+          "impact": "alto"
+        },
+        {
+          "id": 1,
+          "title": "FinOps de IA (OPT-3)",
+          "description": "Whitespace real: nenhum concorrente mapeado comunica FinOps de IA hoje; comprador é o CFO; a Jump já tem produto pronto (OPT-3) para capturar essa demanda.",
+          "related_competitor": null,
+          "status": "open",
+          "impact": "alto"
+        }
+      ],
+      "active_martech_themes_for_crossref": [
+        {
+          "id": 9,
+          "name": "Shadow AI",
+          "description": "Uso não-governado de ferramentas de IA generativa por colaboradores fora dos canais oficiais de TI.",
+          "status": "active",
+          "momentum": "medio"
+        },
+        {
+          "id": 8,
+          "name": "Índice/maturidade de dados e IA",
+          "description": "Modelos e índices para medir a maturidade de dados e IA das organizações.",
+          "status": "active",
+          "momentum": "alto"
+        },
+        {
+          "id": 7,
+          "name": "FinOps de IA / gestão de custo de IA",
+          "description": "Gestão e otimização de custos de workloads de IA como disciplina emergente; eixo em que a Jump já tem oferta própria (OPT-3).",
+          "status": "active",
+          "momentum": "alto"
+        },
+        {
+          "id": 6,
+          "name": "Governança de IA / ISO 42001",
+          "description": "Adoção de governança formal de IA alinhada à ISO 42001 por empresas no Brasil.",
+          "status": "active",
+          "momentum": "alto"
+        }
+      ]
+    },
+    "jump_list_competitors": {
+      "total": 14,
+      "count": 14,
+      "competitors": [
+        {
+          "id": 14,
+          "name": "houer",
+          "display_name": "Grupo Houer",
+          "category": "Consultoria de infraestrutura e tecnologia para setor público",
+          "description": "Grupo com sede em Belo Horizonte/MG, atuante na estruturação de projetos de infraestrutura junto a órgãos públicos e entes privados (Houer Concessões, Houer Engenharia e Houer Tecnologia). Sobreposição com a Jump concentrada na Houer Tecnologia e na frente de consultoria para gestão pública.",
+          "site": "https://www.houer.com.br/",
+          "tier": "challenger",
+          "region": "brazil"
+        },
+        {
+          "id": 1,
+          "name": "indicium",
+          "display_name": "Indicium",
+          "category": "Consultoria de dados e IA",
+          "description": "Consultoria de dados brasileira. Concorre principalmente em conteúdo técnico e captação de talento; alto volume de vagas abertas em IA/ML observado (~jul/2026), sinal de expansão agressiva nesse eixo.",
+          "site": null,
+          "tier": "challenger",
+          "region": "brazil"
+        },
+        {
+          "id": 2,
+          "name": "objective",
+          "display_name": "Objective",
+          "category": "Consultoria de dados e IA",
+          "description": "Consultoria de dados/BI brasileira. Concorre no ângulo de maturidade de dados e IA; lançou o 'Maturity Card Game', ferramenta de diagnóstico de maturidade em IA para empresas.",
+          "site": null,
+          "tier": "challenger",
+          "region": "brazil"
+        },
+        {
+          "id": 9,
+          "name": "beanalytic",
+          "display_name": "beAnalytic",
+          "category": "Consultoria de dados e IA (boutique)",
+          "description": "Consultoria brasileira boutique especializada em Business Intelligence, engenharia de dados e machine learning.",
+          "site": null,
+          "tier": "challenger",
+          "region": "brazil"
+        },
+        {
+          "id": 5,
+          "name": "accenture",
+          "display_name": "Accenture",
+          "category": "Consultoria de dados e IA (global)",
+          "description": "Consultoria global com prática robusta de governança de dados e IA; presença forte no Brasil.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        },
+        {
+          "id": 4,
+          "name": "brq_digital_solutions",
+          "display_name": "BRQ Digital Solutions",
+          "category": "Consultoria de dados e IA / TI",
+          "description": "Consultoria de TI e transformação digital brasileira em transição para modelo AI-native; parceria estratégica ampliada com a AWS.",
+          "site": null,
+          "tier": "leader",
+          "region": "brazil"
+        },
+        {
+          "id": 7,
+          "name": "ci_t",
+          "display_name": "CI&T",
+          "category": "Consultoria de dados e IA / digital-native",
+          "description": "Consultoria brasileira de transformação digital e IA-nativa, capital aberto; posicionamento forte em engenharia de IA aplicada.",
+          "site": null,
+          "tier": "leader",
+          "region": "brazil"
+        },
+        {
+          "id": 10,
+          "name": "deloitte",
+          "display_name": "Deloitte",
+          "category": "Consultoria de dados",
+          "description": "Big Four com prática robusta de consultoria em dados, IA e transformação digital; disputa contratos enterprise de governança de IA e analytics com a Jump.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        },
+        {
+          "id": 12,
+          "name": "ey",
+          "display_name": "EY",
+          "category": "Consultoria de dados",
+          "description": "Big Four com prática de dados, analytics e IA; concorre por budget de transformação digital e governança em contas enterprise.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        },
+        {
+          "id": 13,
+          "name": "kpmg",
+          "display_name": "KPMG",
+          "category": "Consultoria de dados",
+          "description": "Big Four com prática de dados, IA e consultoria de risco/governança.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        },
+        {
+          "id": 3,
+          "name": "marketdata",
+          "display_name": "Marketdata",
+          "category": "Consultoria de marketing orientado a dados",
+          "description": "Consultoria de data-driven marketing, CRM e Loyalty; concorrente indireto/adjacente.",
+          "site": null,
+          "tier": "leader",
+          "region": "brazil"
+        },
+        {
+          "id": 11,
+          "name": "pwc",
+          "display_name": "PwC",
+          "category": "Consultoria de dados",
+          "description": "Big Four com prática de dados, IA responsável e consultoria digital.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        },
+        {
+          "id": 6,
+          "name": "semantix",
+          "display_name": "Semantix",
+          "category": "Plataforma e consultoria de dados e IA",
+          "description": "Plataforma brasileira de big data e IA com braço de consultoria.",
+          "site": null,
+          "tier": "leader",
+          "region": "brazil"
+        },
+        {
+          "id": 8,
+          "name": "stefanini",
+          "display_name": "Stefanini",
+          "category": "Consultoria de TI e IA",
+          "description": "Consultoria de TI e transformação digital com presença global; expandindo consultoria em IA generativa.",
+          "site": null,
+          "tier": "leader",
+          "region": "global"
+        }
+      ]
+    },
+    "jump_list_signals": {
+      "total": 5,
+      "count": 5,
+      "signals": [
+        {
+          "id": 5,
+          "competitor_name": "stefanini",
+          "signal_type": "market_note",
+          "title": "Stefanini cresce 20% no trimestre puxado por IA, dados e cloud",
+          "description": "Crescimento de receita no primeiro trimestre de 2026, puxado por demanda de projetos de IA, dados e cloud.",
+          "source_url": "https://businessmoment.com.br/grupo-stefanini-receita-ia-primeiro-trimestre-2026/",
+          "signal_date": "2026-10-13",
+          "momentum": "alto"
+        },
+        {
+          "id": 3,
+          "competitor_name": "indicium",
+          "signal_type": "acquisition",
+          "title": "Indicium funde com Mesh-AI e vira consultoria global de dados e IA",
+          "description": "Fusão com a britânica Mesh-AI, criando a Indicium AI, com presença nas Américas e Europa.",
+          "source_url": "https://www.acate.com.br/noticias/fusao-indicium-e-empresa-britanica-mesh-ai/",
+          "signal_date": "2026-10-05",
+          "momentum": "alto"
+        },
+        {
+          "id": 4,
+          "competitor_name": "objective",
+          "signal_type": "acquisition",
+          "title": "Objective adquire Eleflow e reforça oferta de dados e IA",
+          "description": "Aquisição da Eleflow, que passa a operar como unidade de negócio de Data e AI.",
+          "source_url": "https://www.prnewswire.com/br/comunicados-para-a-imprensa/objective-anuncia-aquisicao-estrategica-da-eleflow-e-fortalece-atuacao-em-dados--ia-302495791.html",
+          "signal_date": "2026-10-05",
+          "momentum": "alto"
+        },
+        {
+          "id": 2,
+          "competitor_name": "objective",
+          "signal_type": "product_launch",
+          "title": "Objective lança 'Maturity Card Game'",
+          "description": "Ferramenta de diagnóstico de maturidade em dados e IA para empresas.",
+          "source_url": null,
+          "signal_date": "2026-09-28",
+          "momentum": "medio"
+        },
+        {
+          "id": 1,
+          "competitor_name": "indicium",
+          "signal_type": "market_note",
+          "title": "Indicium com alto volume de vagas abertas em IA/ML",
+          "description": "Sinal de expansão de capacidade técnica nesse eixo. Data aproximada.",
+          "source_url": null,
+          "signal_date": "2026-07-15",
+          "momentum": "alto"
+        }
+      ]
+    },
+    "jump_list_opportunities": {
+      "count": 3,
+      "opportunities": [
+        {
+          "id": 3,
+          "title": "Topo de funil GenAI definicional",
+          "description": "Maior demanda do mapa de oportunidades; ponte de conteúdo e lead gen para MLOps e Data Mesh.",
+          "related_competitor": null,
+          "status": "open",
+          "impact": "alto"
+        },
+        {
+          "id": 2,
+          "title": "Índice de Maturidade em IA Governada (NautilusIQ)",
+          "description": "Maior alavanca de citação/PR identificada; whitespace no Brasil.",
+          "related_competitor": "objective",
+          "status": "open",
+          "impact": "alto"
+        },
+        {
+          "id": 1,
+          "title": "FinOps de IA (OPT-3)",
+          "description": "Whitespace real: nenhum concorrente mapeado comunica FinOps de IA hoje; comprador é o CFO; a Jump já tem produto pronto (OPT-3) para capturar essa demanda.",
+          "related_competitor": null,
+          "status": "open",
+          "impact": "alto"
+        }
+      ]
+    },
+    "martech_list_themes": {
+      "count": 4,
+      "themes": [
+        {
+          "id": 9,
+          "name": "Shadow AI",
+          "description": "Uso não-governado de ferramentas de IA generativa por colaboradores fora dos canais oficiais de TI.",
+          "status": "active",
+          "momentum": "medio"
+        },
+        {
+          "id": 8,
+          "name": "Índice/maturidade de dados e IA",
+          "description": "Modelos e índices para medir a maturidade de dados e IA das organizações.",
+          "status": "active",
+          "momentum": "alto"
+        },
+        {
+          "id": 7,
+          "name": "FinOps de IA / gestão de custo de IA",
+          "description": "Gestão e otimização de custos de workloads de IA como disciplina emergente; eixo em que a Jump já tem oferta própria (OPT-3).",
+          "status": "active",
+          "momentum": "alto"
+        },
+        {
+          "id": 6,
+          "name": "Governança de IA / ISO 42001",
+          "description": "Adoção de governança formal de IA alinhada à ISO 42001 por empresas no Brasil.",
+          "status": "active",
+          "momentum": "alto"
+        }
+      ]
+    }
+  }
+}

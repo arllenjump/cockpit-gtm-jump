@@ -33,10 +33,12 @@ A cada validação semanal, grave um snapshot em `account_snapshots`, para o his
 ## Martech-monitor (servidor MCP)
 - URL: `https://martech-monitor-production.up.railway.app/mcp` (variável `MARTECH_MCP_URL`).
 - Ferramentas usadas no marco 1: `jump_get_profile`, `jump_get_brief` (days: 60), `jump_list_competitors`, `jump_list_signals`, `jump_list_opportunities`, `martech_list_themes` (status: active).
-- Duas formas de chamar, escolha a mais simples depois de testar:
-  1. Cliente MCP no backend (SDK `mcp` para Python, transporte HTTP), chamando as ferramentas e passando os resultados ao agente.
-  2. Conector MCP da Claude API, deixando o modelo chamar as ferramentas.
-- Primeira verificação: listar as ferramentas do servidor e chamar `jump_get_profile`. Confirme se o servidor exige autenticação.
+- Forma escolhida: cliente MCP no backend (SDK `mcp` 1.x para Python, transporte HTTP), em `api/app/martech.py`. O backend chama as 6 ferramentas e passa os resultados ao agente.
+- Autenticação: a chave vai na query da URL (`?key=...`), em `MARTECH_MCP_KEY`. A chave do cockpit deve ser pedida ao dono do servidor; nunca no código.
+- Modo escolhido por `MARTECH_MODE`:
+  - `fixture`: lê `api/fixtures/martech-monitor.json`, uma fotografia das respostas reais de 13/11/2026. Usado até o cockpit ter chave própria.
+  - `mcp`: chama o servidor real.
+- Verificação: `uv run python -m scripts.verificar_martech` (dentro de `api/`) ou `GET /api/martech/verificacao` logado no cockpit.
 
 ## Jump Bases (histórico de propostas)
 Existe um projeto no Railway, mas o formato não está documentado. Fica fora do marco 1: o agente de estudo registra a fonte como ausente.
