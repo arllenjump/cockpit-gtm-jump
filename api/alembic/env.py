@@ -1,7 +1,13 @@
+from logging.config import fileConfig
+
 from alembic import context
 from sqlalchemy import create_engine
 
 from app.config import database_url
+
+# Logs do alembic.ini (mostra cada migração aplicada, inclusive no pré-deploy do Railway).
+if context.config.config_file_name:
+    fileConfig(context.config.config_file_name, disable_existing_loggers=False)
 
 # As tabelas entram uma migração por etapa do plano (docs/02-modelo-de-dados.md).
 target_metadata = None

@@ -223,6 +223,7 @@ export default function Lancamentos() {
   const [form, setForm] = useState({ objetivo: "", contexto: "", provas: "", prazo_dias: 42 });
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState("");
+  const [novo, setNovo] = useState(false);
 
   const carregar = () =>
     fetch("/api/lancamentos")
@@ -246,6 +247,8 @@ export default function Lancamentos() {
       });
       if (!r.ok) throw new Error("Não foi possível salvar o briefing.");
       const { id } = await r.json();
+      setNovo(false);
+      setForm({ objetivo: "", contexto: "", provas: "", prazo_dias: 42 });
       await carregar();
       const e2 = await fetch(`/api/lancamentos/${id}/estudo`, { method: "POST" });
       if (!e2.ok) throw new Error((await e2.json().catch(() => null))?.detail ?? "O agente de estudo falhou.");
@@ -314,7 +317,41 @@ export default function Lancamentos() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
         <div className="space-y-6">
-          <form onSubmit={enviar} className={cartao}>
+          {lancamento && !novo ? (
+            <div className={cartao}>
+              <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Briefing</h3>
+              <dl className="mt-4 space-y-3 text-sm">
+                {(
+                  [
+                    ["Produto", dados.produto],
+                    ["Objetivo", lancamento.objetivo],
+                    ["Contexto", lancamento.contexto || "Não informado"],
+                    ["Provas", lancamento.provas || "Não informadas"],
+                    ["Prazo", `${lancamento.prazo_dias} dias`],
+                  ] as const
+                ).map(([rotulo, valor]) => (
+                  <div key={rotulo}>
+                    <dt className={titulo}>{rotulo}</dt>
+                    <dd className="mt-0.5 text-slate-800 dark:text-slate-100">{valor}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+                Lançamento aberto por {lancamento.created_by} em {dataHora(lancamento.started_at)}.
+              </p>
+              <button
+                type="button"
+                disabled={gerando}
+                onClick={() => {
+                  if (window.confirm("Começar um novo lançamento do OPT-3? O lançamento atual fica guardado, mas esta página passa a mostrar o novo.")) setNovo(true);
+                }}
+                className="mt-4 w-full rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-60 dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/5"
+              >
+                Começar novo lançamento
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={enviar} className={cartao}>
             <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Briefing</h3>
             <label className="mt-4 block text-sm text-slate-700 dark:text-slate-200">
               Produto
@@ -356,7 +393,17 @@ export default function Lancamentos() {
             >
               {gerando ? "Gerando o estudo..." : "Enviar ao agente de estudo"}
             </button>
-          </form>
+            {lancamento && (
+              <button
+                type="button"
+                onClick={() => setNovo(false)}
+                className="mt-2 w-full text-sm text-slate-500 hover:text-grafite dark:hover:text-white"
+              >
+                Cancelar e voltar ao lançamento atual
+              </button>
+            )}
+            </form>
+          )}
 
           {lancamento && lancamento.phase >= 2 && (
             <div className={cartao}>
