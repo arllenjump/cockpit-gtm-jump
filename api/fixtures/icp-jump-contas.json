@@ -1,6 +1,6 @@
 {
   "simulacao": true,
-  "aviso": "Contas fictícias para a simulação piloto. Nenhuma é empresa real. Trocar pelo ICP Jump real quando a integração for liberada.",
+  "aviso": "Contas fictícias para a simulação piloto do OPT-3. Nenhuma é empresa real. Textos baseados no posicionamento público do OPT-3 (FinOps de cloud e IA). Trocar pelo ICP Jump real quando a integração for liberada.",
   "contas": [
     {
       "external_id": "sim-001",
@@ -9,21 +9,50 @@
       "employees": 2400,
       "gtm_score": 91,
       "tier": "Tier 1",
-      "score_breakdown": { "account_score": 92, "persona_score": 88, "signal_score": 90, "job_bonus": 2 },
+      "score_breakdown": {
+        "account_score": 92,
+        "persona_score": 88,
+        "signal_score": 90,
+        "job_bonus": 2
+      },
       "signals": [
-        { "type": "cost_optimization", "detail": "Anúncio interno de revisão de custos de nuvem e IA", "date": "2026-10-28" },
-        { "type": "data_initiative", "detail": "Vaga aberta para liderar governança de dados", "date": "2026-10-15" }
+        {
+          "type": "cost_optimization",
+          "detail": "Comitê criado para revisar o gasto com nuvem e IA depois de estourar o orçamento do semestre",
+          "date": "2026-10-28"
+        },
+        {
+          "type": "data_initiative",
+          "detail": "Vaga aberta para Head de FinOps, reportando ao CFO",
+          "date": "2026-10-15"
+        }
       ],
       "decision_makers": [
-        { "role": "Diretor de Tecnologia", "area": "Tecnologia", "is_decision_maker": true },
-        { "role": "Gerente de FinOps", "area": "Finanças", "is_decision_maker": false }
+        {
+          "role": "CFO",
+          "area": "Finanças",
+          "is_decision_maker": true
+        },
+        {
+          "role": "CTO",
+          "area": "Tecnologia",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Gerente de Infraestrutura em Nuvem",
+          "area": "Tecnologia",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
-        "why_now": "Revisão de custos de nuvem e IA em andamento.",
-        "why_us": "Experiência em arquitetura de dados e governança, com certificações ISO 27001 e 42001.",
-        "suggested_approach": "Abrir pela dor de custo de IA com o diretor de tecnologia, apoiado pela área de FinOps.",
-        "risks": ["Projeto interno concorrente de FinOps"],
-        "recommended_offer": "OPT-3 (FinOps de IA)"
+        "why_now": "O gasto com nuvem e IA passou do orçamento e a empresa criou um comitê de custos. A vaga de Head de FinOps mostra que procuram um dono para o tema.",
+        "why_us": "O OPT-3 entrega a CFO e CTO o mesmo número de custo, por time, projeto e caso de uso, em vez de um painel para cada área. A Jump é AWS Partner e tem certificação ISO 27001.",
+        "suggested_approach": "Pedir uma conversa conjunta com CFO e CTO. Propor a fase Crawl do OPT-3, com os primeiros insights já no onboarding, e montar com eles a conta de ROI: gasto, percentual de desperdício e percentual de recuperação.",
+        "risks": [
+          "Podem estar avaliando outra ferramenta de FinOps de mercado",
+          "O comitê pode buscar só um corte pontual, sem prática contínua"
+        ],
+        "recommended_offer": "OPT-3, começando pela fase Crawl (pilar Inform)"
       }
     },
     {
@@ -33,21 +62,49 @@
       "employees": 5800,
       "gtm_score": 84,
       "tier": "Tier 1",
-      "score_breakdown": { "account_score": 85, "persona_score": 80, "signal_score": 86, "job_bonus": 1 },
+      "score_breakdown": {
+        "account_score": 85,
+        "persona_score": 80,
+        "signal_score": 86,
+        "job_bonus": 1
+      },
       "signals": [
-        { "type": "expansion", "detail": "Abertura de centros de distribuição em novas regiões", "date": "2026-10-20" },
-        { "type": "cloud_migration", "detail": "Migração de sistemas legados para nuvem", "date": "2026-09-30" }
+        {
+          "type": "expansion",
+          "detail": "Abertura de centros de distribuição em novas regiões",
+          "date": "2026-10-20"
+        },
+        {
+          "type": "cloud_migration",
+          "detail": "Migração de sistemas legados para AWS e Azure, com plataforma de dados em Databricks",
+          "date": "2026-09-30"
+        }
       ],
       "decision_makers": [
-        { "role": "Vice-presidente de Operações", "area": "Operações", "is_decision_maker": true },
-        { "role": "Head de Dados", "area": "Tecnologia", "is_decision_maker": true }
+        {
+          "role": "CTO",
+          "area": "Tecnologia",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Diretor Financeiro",
+          "area": "Finanças",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Head de Dados",
+          "area": "Tecnologia",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
-        "why_now": "Expansão aumenta o volume de dados e o gasto com nuvem.",
-        "why_us": "Mais de 600 profissionais e parceria AWS para sustentar a migração.",
-        "suggested_approach": "Conectar a expansão ao controle de custo de nuvem e IA desde o início.",
-        "risks": ["Prioridade do momento pode ser só a migração"],
-        "recommended_offer": "OPT-3 (FinOps de IA)"
+        "why_now": "Expansão e migração ao mesmo tempo: o custo passa a se espalhar entre AWS, Azure e Databricks, cada um com sua própria fatura e lógica de cobrança.",
+        "why_us": "O OPT-3 junta AWS, Azure, GCP e Databricks numa visão única, com orçamento e alerta por unidade de negócio. A Jump é AWS Partner e tem mais de 600 profissionais para apoiar a migração.",
+        "suggested_approach": "Entrar pelo CTO antes do fim da migração, mostrando a visão unificada de custo. Levar ao Diretor Financeiro a proposta de orçamento e alerta por região nova.",
+        "risks": [
+          "O time está focado em concluir a migração e pode deixar custo para depois da primeira fatura alta"
+        ],
+        "recommended_offer": "OPT-3 com os pilares Inform e Operate (visão unificada, orçamentos e alertas)"
       }
     },
     {
@@ -57,19 +114,45 @@
       "employees": 1300,
       "gtm_score": 77,
       "tier": "Tier 2",
-      "score_breakdown": { "account_score": 78, "persona_score": 74, "signal_score": 79, "job_bonus": 0 },
+      "score_breakdown": {
+        "account_score": 78,
+        "persona_score": 74,
+        "signal_score": 79,
+        "job_bonus": 0
+      },
       "signals": [
-        { "type": "security_compliance", "detail": "Adequação a novas exigências de proteção de dados", "date": "2026-10-05" }
+        {
+          "type": "security_compliance",
+          "detail": "Auditoria passou a exigir rastreio do uso de IA no atendimento ao paciente",
+          "date": "2026-10-05"
+        },
+        {
+          "type": "data_initiative",
+          "detail": "Assistente de IA generativa lançado no atendimento",
+          "date": "2026-09-18"
+        }
       ],
       "decision_makers": [
-        { "role": "Diretor de TI", "area": "Tecnologia", "is_decision_maker": true }
+        {
+          "role": "Diretor de TI",
+          "area": "Tecnologia",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Gerente de Controladoria",
+          "area": "Finanças",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
-        "why_now": "Exigência regulatória pede governança sobre o uso de IA.",
-        "why_us": "Certificações ISO 27001, 27701 e 42001.",
-        "suggested_approach": "Começar por governança de IA e mostrar o controle de custo como ganho adicional.",
-        "risks": ["Ciclo de compra longo no setor"],
-        "recommended_offer": "OPT-3 (FinOps de IA)"
+        "why_now": "O assistente de IA no atendimento cobra por interação e ainda não tem dono de custo. Ao mesmo tempo, a auditoria quer rastrear o uso de IA.",
+        "why_us": "O OPT-3 mede o custo por agente e por caso de uso. A Jump tem certificação ISO 42001 em governança de IA, além de ISO 27001 e 27701.",
+        "suggested_approach": "Começar pelo custo por agente do assistente de atendimento e conectar à governança de IA exigida pela auditoria. O RadarAI pode entrar depois, na parte de risco.",
+        "risks": [
+          "A decisão pode ficar com compliance e não com finanças",
+          "Ciclo de compra longo no setor"
+        ],
+        "recommended_offer": "OPT-3 com custo por agente de IA"
       }
     },
     {
@@ -79,20 +162,40 @@
       "employees": 3100,
       "gtm_score": 68,
       "tier": "Tier 2",
-      "score_breakdown": { "account_score": 70, "persona_score": 62, "signal_score": 69, "job_bonus": 1 },
+      "score_breakdown": {
+        "account_score": 70,
+        "persona_score": 62,
+        "signal_score": 69,
+        "job_bonus": 1
+      },
       "signals": [
-        { "type": "digital_transformation", "detail": "Programa de transformação digital na fábrica", "date": "2026-09-12" }
+        {
+          "type": "digital_transformation",
+          "detail": "Nova plataforma de dados em Databricks convivendo com o ambiente antigo em Teradata",
+          "date": "2026-09-12"
+        }
       ],
       "decision_makers": [
-        { "role": "Gerente de Inovação", "area": "Inovação", "is_decision_maker": false },
-        { "role": "Diretor Industrial", "area": "Operações", "is_decision_maker": true }
+        {
+          "role": "Diretor de TI",
+          "area": "Tecnologia",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Controller",
+          "area": "Finanças",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
-        "why_now": "Programa de transformação digital com uso crescente de IA.",
-        "why_us": "Mais de 60 clientes atendidos em dados e IA.",
-        "suggested_approach": "Entrar pela área de inovação e levar o caso de custo ao diretor industrial.",
-        "risks": ["Decisor principal fora da área de tecnologia"],
-        "recommended_offer": "OPT-3 (FinOps de IA)"
+        "why_now": "Duas plataformas de dados rodando ao mesmo tempo, Databricks e Teradata, com custos que ninguém compara lado a lado.",
+        "why_us": "O OPT-3 normaliza custos de provedores com lógicas de cobrança diferentes, incluindo Databricks e Teradata, numa visão única. A Jump tem mais de 60 clientes em dados e IA.",
+        "suggested_approach": "Mostrar ao Diretor de TI a comparação de custo entre as duas plataformas e as recomendações de recursos ociosos. Levar ao Controller a previsão de gasto da transição.",
+        "risks": [
+          "Orçamento de TI apertado durante a transição",
+          "Área industrial prioriza produção, não custo de dados"
+        ],
+        "recommended_offer": "OPT-3 com o pilar Optimize (ociosos e rightsizing)"
       }
     },
     {
@@ -102,19 +205,40 @@
       "employees": 900,
       "gtm_score": 62,
       "tier": "Tier 2",
-      "score_breakdown": { "account_score": 60, "persona_score": 64, "signal_score": 63, "job_bonus": 0 },
+      "score_breakdown": {
+        "account_score": 60,
+        "persona_score": 64,
+        "signal_score": 63,
+        "job_bonus": 0
+      },
       "signals": [
-        { "type": "leadership_hire", "detail": "Nova liderança de tecnologia contratada", "date": "2026-10-22" }
+        {
+          "type": "leadership_hire",
+          "detail": "Novo CFO contratado",
+          "date": "2026-10-22"
+        }
       ],
       "decision_makers": [
-        { "role": "Diretora de Tecnologia", "area": "Tecnologia", "is_decision_maker": true }
+        {
+          "role": "CFO",
+          "area": "Finanças",
+          "is_decision_maker": true
+        },
+        {
+          "role": "Coordenador de Infraestrutura",
+          "area": "Tecnologia",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
-        "why_now": "Nova liderança costuma revisar contratos e custos nos primeiros meses.",
-        "why_us": "Prêmio Negócios em Expansão 2025 da Exame.",
-        "suggested_approach": "Apresentar um diagnóstico rápido de custo de IA para a nova liderança.",
-        "risks": ["Agenda da nova liderança ainda indefinida"],
-        "recommended_offer": "OPT-3 (FinOps de IA)"
+        "why_now": "Um CFO novo costuma revisar contratos e custos nos primeiros meses, e a fatura de nuvem é uma das primeiras a ser questionada.",
+        "why_us": "O OPT-3 entrega ao financeiro a clareza que a fatura do provedor não dá. A Jump ganhou o prêmio Negócios em Expansão 2025 da Exame.",
+        "suggested_approach": "Oferecer ao novo CFO um diagnóstico de desperdício em nuvem, com a conta de ROI feita sobre os dados da própria empresa.",
+        "risks": [
+          "Porte menor: o gasto em nuvem pode não justificar o projeto agora",
+          "Usa uma nuvem só, o que reduz o ganho da visão unificada"
+        ],
+        "recommended_offer": "OPT-3, fase Crawl"
       }
     },
     {
@@ -124,16 +248,28 @@
       "employees": 450,
       "gtm_score": 47,
       "tier": "Tier 3",
-      "score_breakdown": { "account_score": 50, "persona_score": 45, "signal_score": 40, "job_bonus": 0 },
+      "score_breakdown": {
+        "account_score": 50,
+        "persona_score": 45,
+        "signal_score": 40,
+        "job_bonus": 0
+      },
       "signals": [],
       "decision_makers": [
-        { "role": "Coordenador de TI", "area": "Tecnologia", "is_decision_maker": false }
+        {
+          "role": "Coordenador de TI",
+          "area": "Tecnologia",
+          "is_decision_maker": false
+        }
       ],
       "dossier": {
         "why_now": "Sem sinal ativo no momento.",
-        "why_us": "Experiência em arquitetura de dados.",
-        "suggested_approach": "Manter em nutrição até surgir um sinal.",
-        "risks": ["Sem decisor mapeado"],
+        "why_us": "Experiência em arquitetura de dados e nuvem.",
+        "suggested_approach": "Manter em nutrição com conteúdo sobre custo de nuvem e IA até surgir um sinal.",
+        "risks": [
+          "Gasto em nuvem pequeno",
+          "Sem decisor mapeado"
+        ],
         "recommended_offer": "Nenhuma no momento"
       }
     }
