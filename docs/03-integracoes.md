@@ -8,7 +8,7 @@
 
 ### Adapter
 Crie um único adapter com dois modos, escolhido por `ICP_JUMP_MODE`:
-- `fixture`: lê `docs/fixtures/icp-jump-contas.json`.
+- `fixture`: lê `api/fixtures/icp-jump-contas.json` (fica dentro de `api/` porque o serviço no Railway só publica essa pasta). Hoje são contas fictícias da simulação piloto.
 - `api`: chama a API real em `ICP_JUMP_API_URL` com `ICP_JUMP_API_TOKEN`.
 
 Funções mínimas:
