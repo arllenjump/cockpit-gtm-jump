@@ -5,10 +5,9 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import auth
+from app import auth, contas
 from app.config import env
 from app.db import engine
-
 
 
 class OcultarRetornoDoLogin(logging.Filter):
@@ -31,6 +30,7 @@ app.add_middleware(
     https_only=env("APP_URL", "").startswith("https://"),
 )
 app.include_router(auth.router)
+app.include_router(contas.router)
 
 
 @app.get("/api/health")
