@@ -10,13 +10,14 @@ export default function Login() {
   const erro = params.get("erro");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <img src="/logo-jump.png" alt="Jump" className="h-8" />
-        <h1 className="mt-6 font-titulo text-xl font-medium text-grafite">Cockpit GTM</h1>
-        <p className="mt-1 text-sm text-slate-500">Entre com sua conta Microsoft da Jump.</p>
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 dark:bg-grafite-escuro">
+      <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-grafite">
+        <img src="/logo-jump.png" alt="Jump" className="h-8 dark:hidden" />
+        <img src="/logo-jump-branco.png" alt="Jump" className="hidden h-8 dark:block" />
+        <h1 className="mt-6 font-titulo text-xl font-medium text-grafite dark:text-white">Cockpit GTM</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">Entre com sua conta Microsoft da Jump.</p>
         {erro && (
-          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{ERROS[erro] ?? "Não foi possível entrar."}</p>
+          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-500/15 dark:text-red-300">{ERROS[erro] ?? "Não foi possível entrar."}</p>
         )}
         <a
           href="/api/auth/login"
