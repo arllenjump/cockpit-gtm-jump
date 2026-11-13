@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import aprovacoes, auth, contas, lancamentos, martech
+from app import aprovacoes, auth, contas, contratos, lancamentos, martech
 from app.config import env
 from app.db import engine
 
@@ -34,6 +34,7 @@ app.include_router(contas.router)
 app.include_router(martech.router)
 app.include_router(lancamentos.router)
 app.include_router(aprovacoes.router)
+app.include_router(contratos.router)
 
 
 @app.get("/api/health")

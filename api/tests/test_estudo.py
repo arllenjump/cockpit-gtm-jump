@@ -34,7 +34,7 @@ def ambiente(monkeypatch):
     monkeypatch.setenv("MARTECH_MODE", "fixture")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "chave-de-teste")
     monkeypatch.setenv("CLAUDE_MODEL", "claude-sonnet-5-5")
-    limpar = ("delete from agent_log; delete from approvals where item_type = 'estudo'; delete from gate_events;"
+    limpar = ("delete from agent_log; delete from approvals where item_type in ('estudo', 'contrato'); delete from gate_events;"
               " delete from test_hypotheses; delete from contract_clauses; delete from gtm_contracts;"
               " delete from studies; delete from briefings; delete from launches;")
     with engine.begin() as conn:

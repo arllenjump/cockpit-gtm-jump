@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.auth import usuario_logado
+from app.contratos import decidir_contrato
 from app.db import engine
 from app.lancamentos import decidir_estudo
 
@@ -41,5 +42,7 @@ def decidir(aprovacao_id: int, decisao: Decisao, usuario: dict = Depends(usuario
         raise HTTPException(status_code=409, detail="Este item já foi decidido.")
     if item["item_type"] == "estudo":
         return decidir_estudo(item["item_id"], decisao.acao, decisao.nota, usuario["email"])
-    # O contrato entra aqui na etapa 12; a lista de contas já nasce aprovada.
-    raise HTTPException(status_code=422, detail=f"Itens do tipo {item['item_type']} ainda não são decididos pela fila.")
+    if item["item_type"] == "contrato":
+        return decidir_contrato(item["item_id"], decisao.acao, decisao.nota, usuario["email"])
+    # A lista de contas já nasce aprovada.
+    raise HTTPException(status_code=422, detail=f"Itens do tipo {item['item_type']} não são decididos pela fila.")

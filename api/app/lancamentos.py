@@ -263,7 +263,19 @@ def gerar_contrato(lancamento_id: int):
             ),
             {"l": lancamento_id},
         ).mappings().first()
+        instrucao = conn.execute(
+            text(
+                """select a.note from approvals a join gtm_contracts c on c.id = a.item_id
+                   where a.item_type = 'contrato' and a.status = 'devolvido' and c.launch_id = :l
+                     and c.id = (select max(id) from gtm_contracts where launch_id = :l)
+                   order by a.id desc limit 1"""
+            ),
+            {"l": lancamento_id},
+        ).scalar()
     contexto = {"produto": "OPT-3", "briefing": dict(b), "estudo_aprovado": e["content"]}
+    if instrucao:
+        # Contrato anterior devolvido pelo marketing: a instrução orienta a nova versão.
+        contexto["instrucao_do_marketing"] = instrucao
     if e["note"]:
         contexto["ressalva_do_marketing"] = e["note"]
     logs: list[int] = []
@@ -317,4 +329,19 @@ def gerar_contrato(lancamento_id: int):
             ),
             {"i": json.dumps({"contract_id": contrato_id}), "o": json.dumps(contagem)},
         )
+        # Fila de aprovação: um item pendente por lançamento, sempre apontando para a versão mais nova.
+        resumo = f"Contrato de GTM v{versao} do OPT-3 (lançamento {lancamento_id})"
+        repontado = conn.execute(
+            text(
+                """update approvals set item_id = :c, summary = :r
+                   where item_type = 'contrato' and status = 'pendente'
+                     and item_id in (select id from gtm_contracts where launch_id = :l)"""
+            ),
+            {"c": contrato_id, "r": resumo, "l": lancamento_id},
+        ).rowcount
+        if not repontado:
+            conn.execute(
+                text("insert into approvals (item_type, item_id, phase, summary) values ('contrato', :c, 2, :r)"),
+                {"c": contrato_id, "r": resumo},
+            )
     return {"id": contrato_id, "versao": versao, "clausulas": len(contrato["clausulas"]), "vereditos": contagem}
