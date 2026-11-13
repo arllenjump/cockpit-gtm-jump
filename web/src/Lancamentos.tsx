@@ -31,6 +31,7 @@ type Dados = {
     decided_at: string | null;
   };
   custo: { gasto_usd: number; teto_usd: number; alerta: boolean };
+  contrato: null | { id: number; version: number; status: string; created_at: string; alinhado: number; ajustar: number; conflito: number };
 };
 
 const FONTES = ["martech-monitor", "ICP Jump", "Jump Bases"];
@@ -269,6 +270,16 @@ export default function Lancamentos() {
     setGerando(false);
   }
 
+  async function gerarContrato() {
+    if (!dados?.lancamento) return;
+    setErro("");
+    setGerando(true);
+    const r = await fetch(`/api/lancamentos/${dados.lancamento.id}/contrato`, { method: "POST" });
+    if (!r.ok) setErro((await r.json().catch(() => null))?.detail ?? "O agente de contrato falhou.");
+    await carregar();
+    setGerando(false);
+  }
+
   async function refazer() {
     if (!dados?.lancamento) return;
     setErro("");
@@ -280,7 +291,7 @@ export default function Lancamentos() {
   }
 
   if (!dados) return <p className="text-sm text-slate-500">{erro || "Carregando..."}</p>;
-  const { lancamento, estudo, custo } = dados;
+  const { lancamento, estudo, custo, contrato } = dados;
 
   return (
     <div>
@@ -346,6 +357,41 @@ export default function Lancamentos() {
               {gerando ? "Gerando o estudo..." : "Enviar ao agente de estudo"}
             </button>
           </form>
+
+          {lancamento && lancamento.phase >= 2 && (
+            <div className={cartao}>
+              <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Contrato de GTM</h3>
+              {contrato ? (
+                <div className="mt-3 text-sm text-slate-700 dark:text-slate-200">
+                  <div>
+                    Versão {contrato.version} · {contrato.status} · {dataHora(contrato.created_at)}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                      {contrato.alinhado} alinhado
+                    </span>
+                    <span className="rounded-full bg-orange-50 px-2 py-0.5 text-laranja-escuro dark:bg-laranja/15 dark:text-laranja-claro">
+                      {contrato.ajustar} ajustar
+                    </span>
+                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-red-700 dark:bg-red-500/15 dark:text-red-300">
+                      {contrato.conflito} conflito
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+                  Estudo aprovado. O agente de contrato escreve as 10 cláusulas e o plano de testes, e a auditoria revisa cada cláusula.
+                </p>
+              )}
+              <button
+                disabled={gerando}
+                onClick={gerarContrato}
+                className="mt-4 w-full rounded-md bg-laranja px-4 py-2 text-sm font-medium text-white hover:bg-laranja-escuro disabled:opacity-60"
+              >
+                {gerando ? "Gerando..." : contrato ? "Gerar nova versão do contrato" : "Gerar contrato de GTM"}
+              </button>
+            </div>
+          )}
 
           <div className={cartao}>
             <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Fontes</h3>

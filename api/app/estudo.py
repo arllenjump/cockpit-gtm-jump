@@ -143,15 +143,15 @@ def custo(modelo: str, tokens_in: int, tokens_out: int) -> float | None:
     return round((tokens_in * preco[0] + tokens_out * preco[1]) / 1_000_000, 4)
 
 
-def chamar_claude(mensagens: list[dict], modelo: str):
-    """Uma chamada à Claude com saída presa ao ESQUEMA. Recusa vira fallback do servidor."""
+def chamar_claude(mensagens: list[dict], modelo: str, sistema: str = SISTEMA, esquema: dict = ESQUEMA):
+    """Uma chamada à Claude com saída presa ao esquema. Recusa vira fallback do servidor."""
     cliente = anthropic.Anthropic()
     return cliente.beta.messages.create(
         model=modelo,
         max_tokens=16000,
-        system=SISTEMA,
+        system=sistema,
         messages=mensagens,
-        output_config={"format": {"type": "json_schema", "schema": ESQUEMA}},
+        output_config={"format": {"type": "json_schema", "schema": esquema}},
         betas=["server-side-fallback-2026-07-01"],
         fallbacks="default",
     )

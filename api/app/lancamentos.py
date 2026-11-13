@@ -7,7 +7,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
+from app import contrato as agente_contrato
 from app import estudo as agente
+from app.auditoria import auditar
 from app.auth import usuario_logado
 from app.config import env
 from app.db import engine
@@ -31,6 +33,36 @@ def custo_do_mes(conn) -> dict:
     teto = float(env("CLAUDE_MONTHLY_BUDGET_USD", "50"))
     gasto = float(gasto)
     return {"gasto_usd": round(gasto, 4), "teto_usd": teto, "alerta": gasto >= 0.8 * teto}
+
+
+def registrador(nome_agente: str, acao: str, entrada: dict, logs: list[int]):
+    """Devolve a função que grava cada chamada à Claude em agent_log (tokens, custo, problemas)."""
+
+    def registrar(resposta, modelo, tentativa, problemas):
+        uso = resposta.usage
+        servido = getattr(resposta, "model", None) or modelo
+        with engine.begin() as conn:
+            logs.append(
+                conn.execute(
+                    text(
+                        """insert into agent_log (agent, action, input_ref, output_ref, model, tokens_in, tokens_out, cost_estimate)
+                           values (:a, :ac, cast(:i as jsonb), cast(:o as jsonb), :m, :ti, :to, :c) returning id"""
+                    ),
+                    {
+                        "a": nome_agente,
+                        "ac": f"{acao} (tentativa {tentativa})",
+                        "i": json.dumps(entrada),
+                        "o": json.dumps({"ok": not problemas, "problemas": problemas, "stop_reason": resposta.stop_reason,
+                                         "request_id": getattr(resposta, "_request_id", None)}, ensure_ascii=False),
+                        "m": servido,
+                        "ti": uso.input_tokens,
+                        "to": uso.output_tokens,
+                        "c": agente.custo(servido, uso.input_tokens, uso.output_tokens),
+                    },
+                ).scalar_one()
+            )
+
+    return registrar
 
 
 @router.get("")
@@ -57,10 +89,24 @@ def atual():
                 ),
                 {"l": lancamento["id"]},
             ).mappings().first()
+        contrato = None
+        if lancamento:
+            contrato = conn.execute(
+                text(
+                    """select c.id, c.version, c.status, c.created_at,
+                              count(*) filter (where k.audit_verdict = 'alinhado') as alinhado,
+                              count(*) filter (where k.audit_verdict = 'ajustar') as ajustar,
+                              count(*) filter (where k.audit_verdict = 'conflito') as conflito
+                       from gtm_contracts c join contract_clauses k on k.contract_id = c.id
+                       where c.launch_id = :l group by c.id order by c.version desc limit 1"""
+                ),
+                {"l": lancamento["id"]},
+            ).mappings().first()
         return {
             "produto": "OPT-3",
             "lancamento": dict(lancamento) if lancamento else None,
             "estudo": dict(estudo) if estudo else None,
+            "contrato": dict(contrato) if contrato else None,
             "custo": custo_do_mes(conn),
         }
 
@@ -107,30 +153,7 @@ def gerar_estudo(lancamento_id: int):
             {"l": lancamento_id},
         ).scalar()
     logs: list[int] = []
-
-    def registrar(resposta, modelo, tentativa, problemas):
-        uso = resposta.usage
-        servido = getattr(resposta, "model", None) or modelo
-        with engine.begin() as conn:
-            logs.append(
-                conn.execute(
-                    text(
-                        """insert into agent_log (agent, action, input_ref, output_ref, model, tokens_in, tokens_out, cost_estimate)
-                           values (:a, :ac, cast(:i as jsonb), cast(:o as jsonb), :m, :ti, :to, :c) returning id"""
-                    ),
-                    {
-                        "a": agente.AGENTE,
-                        "ac": f"gerar_estudo (tentativa {tentativa})",
-                        "i": json.dumps({"launch_id": lancamento_id, "briefing_id": b["id"]}),
-                        "o": json.dumps({"ok": not problemas, "problemas": problemas, "stop_reason": resposta.stop_reason,
-                                         "request_id": getattr(resposta, "_request_id", None)}, ensure_ascii=False),
-                        "m": servido,
-                        "ti": uso.input_tokens,
-                        "to": uso.output_tokens,
-                        "c": agente.custo(servido, uso.input_tokens, uso.output_tokens),
-                    },
-                ).scalar_one()
-            )
+    registrar = registrador(agente.AGENTE, "gerar_estudo", {"launch_id": lancamento_id, "briefing_id": b["id"]}, logs)
 
     try:
         resultado = agente.gerar(briefing, "OPT-3", registrar, instrucao)
@@ -209,3 +232,89 @@ def decidir_estudo(estudo_id: int, acao: str, nota: str, email: str) -> dict:
             {"p": item["product_id"], "l": item["launch_id"], "entrou": item["started_at"]},
         )
     return {"status": status_aprovacao, "fase": 2}
+
+
+@router.post("/{lancamento_id}/contrato")
+def gerar_contrato(lancamento_id: int):
+    """Etapa 11: gera as 10 cláusulas e os testes, aplica a auditoria fixa e grava a próxima versão do contrato."""
+    if not env("ANTHROPIC_API_KEY"):
+        raise HTTPException(status_code=503, detail="A chave da Claude (ANTHROPIC_API_KEY) ainda não foi configurada.")
+    with engine.connect() as conn:
+        lanc = conn.execute(
+            text(
+                """select l.id, l.phase, l.product_id, p.slug from launches l join products p on p.id = l.product_id
+                   where l.id = :l"""
+            ),
+            {"l": lancamento_id},
+        ).mappings().first()
+        if not lanc:
+            raise HTTPException(status_code=404, detail="Lançamento não encontrado.")
+        if lanc["phase"] < 2:
+            raise HTTPException(status_code=409, detail="O contrato só é gerado depois que o estudo for aprovado (fase 2).")
+        b = conn.execute(
+            text("select objetivo, contexto, provas, prazo_dias from briefings where launch_id = :l order by id desc limit 1"),
+            {"l": lancamento_id},
+        ).mappings().first()
+        e = conn.execute(
+            text(
+                """select s.id, s.content, a.note from studies s
+                   join approvals a on a.item_type = 'estudo' and a.item_id = s.id
+                   where s.launch_id = :l and s.status = 'aprovado' order by s.id desc limit 1"""
+            ),
+            {"l": lancamento_id},
+        ).mappings().first()
+    contexto = {"produto": "OPT-3", "briefing": dict(b), "estudo_aprovado": e["content"]}
+    if e["note"]:
+        contexto["ressalva_do_marketing"] = e["note"]
+    logs: list[int] = []
+    registrar = registrador(agente_contrato.AGENTE, "gerar_contrato", {"launch_id": lancamento_id, "study_id": e["id"]}, logs)
+
+    try:
+        contrato = agente_contrato.gerar(contexto, registrar)
+    except agente_contrato.ContratoInvalido as erro:
+        raise HTTPException(status_code=422, detail=f"O contrato não passou na checagem depois de duas tentativas: {erro}")
+    except anthropic.APIError as erro:
+        raise HTTPException(status_code=502, detail=f"Falha ao chamar a Claude ({type(erro).__name__}).")
+
+    vereditos = auditar(contrato["clausulas"], contrato["testes"], lanc["slug"])
+    with engine.begin() as conn:
+        versao = conn.execute(
+            text("select coalesce(max(version), 0) + 1 from gtm_contracts where product_id = :p"), {"p": lanc["product_id"]}
+        ).scalar_one()
+        contrato_id = conn.execute(
+            text("insert into gtm_contracts (product_id, launch_id, version) values (:p, :l, :v) returning id"),
+            {"p": lanc["product_id"], "l": lancamento_id, "v": versao},
+        ).scalar_one()
+        for c in contrato["clausulas"]:
+            v = vereditos[c["key"]]
+            conn.execute(
+                text(
+                    """insert into contract_clauses (contract_id, clause_key, strategy, execution, audit_verdict, audit_note, reviewed_at)
+                       values (:c, :k, :e, :x, :v, :n, now())"""
+                ),
+                {"c": contrato_id, "k": c["key"], "e": c["estrategia"], "x": c["execucao"], "v": v["veredito"], "n": v["nota"] or None},
+            )
+        for t in contrato["testes"]:
+            conn.execute(
+                text(
+                    """insert into test_hypotheses
+                       (contract_id, code, hypothesis, path_a, path_b, fast_signal, slow_signal, expected_range, decision_rule, status)
+                       values (:c, :cod, :h, :a, :b, :fs, :ss, cast(:fx as jsonb), :r, :st)"""
+                ),
+                {"c": contrato_id, "cod": t["codigo"], "h": t["hipotese"], "a": t["caminho_a"], "b": t["caminho_b"],
+                 "fs": t["sinal_rapido"], "ss": t["sinal_lento"], "fx": json.dumps({"texto": t["faixa_prevista"]}, ensure_ascii=False),
+                 "r": t["regra"], "st": t["status"]},
+            )
+        conn.execute(
+            text("update agent_log set output_ref = output_ref || cast(:o as jsonb) where id = :id"),
+            {"o": json.dumps({"contract_id": contrato_id}), "id": logs[-1]},
+        )
+        contagem = {k: sum(1 for v in vereditos.values() if v["veredito"] == k) for k in ("alinhado", "ajustar", "conflito")}
+        conn.execute(
+            text(
+                """insert into agent_log (agent, action, input_ref, output_ref)
+                   values ('auditoria', 'auditoria_fixa', cast(:i as jsonb), cast(:o as jsonb))"""
+            ),
+            {"i": json.dumps({"contract_id": contrato_id}), "o": json.dumps(contagem)},
+        )
+    return {"id": contrato_id, "versao": versao, "clausulas": len(contrato["clausulas"]), "vereditos": contagem}

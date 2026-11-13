@@ -35,6 +35,7 @@ def ambiente(monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "chave-de-teste")
     monkeypatch.setenv("CLAUDE_MODEL", "claude-sonnet-5-5")
     limpar = ("delete from agent_log; delete from approvals where item_type = 'estudo'; delete from gate_events;"
+              " delete from test_hypotheses; delete from contract_clauses; delete from gtm_contracts;"
               " delete from studies; delete from briefings; delete from launches;")
     with engine.begin() as conn:
         conn.execute(text(limpar))
@@ -47,7 +48,7 @@ def fila(monkeypatch, *respostas):
     pendentes = list(respostas)
     chamadas = []
 
-    def falsa(mensagens, modelo):
+    def falsa(mensagens, modelo, *args, **kwargs):
         chamadas.append(mensagens)
         return pendentes.pop(0)
 
