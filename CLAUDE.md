@@ -27,5 +27,5 @@ Aplicação própria da Operação GTM Jump: agentes de IA executam cada etapa d
 
 ## Ambiente e segredos
 - Trabalhe em branches e abra PR; a `main` faz deploy no Railway.
-- Segredos só por variável de ambiente, nunca no código nem em commits. Variáveis: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`, `ICP_JUMP_MODE`, `ICP_JUMP_API_URL`, `ICP_JUMP_API_TOKEN`, `MARTECH_MODE`, `MARTECH_MCP_URL`, `MARTECH_MCP_KEY`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_TENANT_ID`, `ALLOWED_EMAIL_DOMAIN`, `SESSION_SECRET`, `APP_URL`.
+- Segredos só por variável de ambiente, nunca no código nem em commits. Variáveis: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`, `ICP_JUMP_MODE`, `ICP_JUMP_API_URL`, `ICP_JUMP_API_TOKEN`, `MARTECH_MODE`, `MARTECH_MCP_URL`, `MARTECH_MCP_KEY`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_TENANT_ID`, `ALLOWED_EMAIL_DOMAIN`, `SESSION_SECRET`, `APP_URL`, `BLOCKED_CLIENT_NAMES`.
 - Mantenha um `.env.example` com os nomes das variáveis e nenhum valor real.
