@@ -55,9 +55,13 @@ def logout(request: Request):
     return RedirectResponse("/login")
 
 
-@router.get("/me")
-def me(request: Request):
+def usuario_logado(request: Request) -> dict:
     user = request.session.get("user")
     if not user:
         raise HTTPException(status_code=401, detail="Não autenticado")
     return user
+
+
+@router.get("/me")
+def me(request: Request):
+    return usuario_logado(request)
