@@ -48,6 +48,17 @@ Saída:
 ```
 As 10 chaves estão em `00-contexto.md`. No máximo 2 testes com status `ativa`.
 
+### Apostas iniciais do OPT-3
+Definidas na apresentação da operação. O agente parte delas: mantém os códigos e os status e só muda uma aposta se o estudo aprovado justificar, dizendo o motivo na própria hipótese.
+
+| Código | Hipótese | Caminho A | Caminho B | Sinal rápido | Sinal lento | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| H1 | Para o CFO, a dor de custo engaja mais que governança | Custo da fatura de nuvem | Governança e controle | CTR e engajamento por conta | Contas que viram SQL | ativa |
+| H2 | O primeiro contato rende mais pelo CFO do que pelo CTO | Sequência pelo CFO | Sequência pelo CTO ou Diretor de TI | Taxa de resposta | SQLs aceitos | ativa |
+| H3 | Oferta de entrada sem reunião converte mais que pedir conversa | Material ou diagnóstico sem reunião | "Falar com especialista" | Conversão do anúncio | Contas que vão à reunião | na_fila |
+
+A faixa prevista sai do histórico da Jump (campanha Farma, Sponsored Messaging e o cluster do Opt3 no Google Ads); até ser calibrada, fica "a calibrar com o histórico".
+
 ## Auditoria
 Duas camadas.
 

@@ -52,6 +52,7 @@ def test_contrato_v1_com_10_clausulas_testes_e_auditoria(logado, monkeypatch):  
     # entrada do agente: estudo aprovado, ressalva e resumo das contas
     pedido = chamadas[0][0]["content"]
     assert "Dar mais peso ao CFO." in pedido and "estudo_aprovado" in pedido and "contas_aderentes" in pedido
+    assert "apostas_iniciais" in pedido and "Para o CFO, a dor de custo engaja mais que governança" in pedido
     agentes = [a["agent"] for a in um("select agent from agent_log where agent in ('contrato', 'auditoria') order by id")]
     assert agentes == ["contrato", "auditoria"]
     assert um("select output_ref from agent_log where agent = 'contrato'")[0]["output_ref"]["contract_id"] == c["id"]
