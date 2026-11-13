@@ -9,3 +9,6 @@
   --color-laranja-claro: #f8af5e;
   --font-titulo: "Kanit", ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Modo escuro: ativado pela classe "dark" no <html> (ver src/tema.ts) */
+@custom-variant dark (&:where(.dark, .dark *));
