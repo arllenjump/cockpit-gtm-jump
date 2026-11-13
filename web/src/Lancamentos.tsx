@@ -1,0 +1,255 @@
+import { useEffect, useState } from "react";
+
+type Estudo = {
+  mercado: string;
+  concorrentes: { nome: string; movimento: string; implicacao: string }[];
+  oportunidades: { titulo: string; porque: string; impacto: "baixo" | "medio" | "alto" }[];
+  riscos: string[];
+  perguntas_em_aberto: string[];
+  fontes: { lidas: string[]; ausentes: string[] };
+};
+type Dados = {
+  produto: string;
+  lancamento: null | {
+    id: number;
+    phase: number;
+    created_by: string;
+    started_at: string;
+    objetivo: string;
+    contexto: string;
+    provas: string;
+    prazo_dias: number;
+  };
+  estudo: null | { id: number; content: Estudo; status: string; created_at: string };
+  custo: { gasto_usd: number; teto_usd: number; alerta: boolean };
+};
+
+const FONTES = ["martech-monitor", "ICP Jump", "Jump Bases"];
+const IMPACTO = {
+  alto: "bg-orange-50 text-laranja-escuro dark:bg-laranja/15 dark:text-laranja-claro",
+  medio: "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200",
+  baixo: "bg-slate-50 text-slate-500 dark:bg-white/5 dark:text-slate-400",
+};
+const campo =
+  "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-laranja focus:outline-none dark:border-white/15 dark:bg-grafite-escuro dark:text-white";
+const cartao = "rounded-xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-grafite";
+const titulo = "text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
+
+function Lista({ itens }: { itens: string[] }) {
+  return (
+    <ul className="list-disc space-y-1 pl-4 text-sm text-slate-800 dark:text-slate-100">
+      {itens.map((i) => (
+        <li key={i}>{i}</li>
+      ))}
+    </ul>
+  );
+}
+
+function VerEstudo({ estudo }: { estudo: Estudo }) {
+  return (
+    <div className="space-y-6">
+      <section>
+        <h4 className={titulo}>Mercado</h4>
+        <p className="mt-1 text-sm text-slate-800 dark:text-slate-100">{estudo.mercado}</p>
+      </section>
+      <section>
+        <h4 className={titulo}>Concorrentes</h4>
+        <div className="mt-2 space-y-3">
+          {estudo.concorrentes.map((c) => (
+            <div key={c.nome} className="text-sm">
+              <div className="font-medium text-grafite dark:text-white">{c.nome}</div>
+              <div className="text-slate-700 dark:text-slate-200">{c.movimento}</div>
+              <div className="text-slate-500 dark:text-slate-400">Implicação: {c.implicacao}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h4 className={titulo}>Oportunidades</h4>
+        <div className="mt-2 space-y-3">
+          {estudo.oportunidades.map((o) => (
+            <div key={o.titulo} className="text-sm">
+              <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-medium ${IMPACTO[o.impacto]}`}>impacto {o.impacto}</span>
+              <span className="font-medium text-grafite dark:text-white">{o.titulo}</span>
+              <div className="mt-0.5 text-slate-700 dark:text-slate-200">{o.porque}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h4 className={titulo}>Riscos</h4>
+        <div className="mt-1">
+          <Lista itens={estudo.riscos} />
+        </div>
+      </section>
+      <section>
+        <h4 className={titulo}>Perguntas em aberto</h4>
+        <div className="mt-1">
+          <Lista itens={estudo.perguntas_em_aberto} />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Fontes({ gerando, fontes }: { gerando: boolean; fontes?: Estudo["fontes"] }) {
+  return (
+    <ul className="space-y-2 text-sm">
+      {FONTES.map((f) => {
+        const lida = fontes?.lidas.includes(f);
+        const ausente = fontes?.ausentes.includes(f);
+        const estado = gerando ? "lendo..." : lida ? "lida" : ausente ? "ausente" : "aguardando";
+        const cor = lida
+          ? "text-emerald-700 dark:text-emerald-300"
+          : ausente
+            ? "text-slate-400"
+            : "text-laranja-escuro dark:text-laranja-claro";
+        return (
+          <li key={f} className="flex justify-between gap-4">
+            <span className="text-slate-800 dark:text-slate-100">{f}</span>
+            <span className={cor}>{estado}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+export default function Lancamentos() {
+  const [dados, setDados] = useState<Dados | null>(null);
+  const [form, setForm] = useState({ objetivo: "", contexto: "", provas: "", prazo_dias: 42 });
+  const [gerando, setGerando] = useState(false);
+  const [erro, setErro] = useState("");
+
+  const carregar = () =>
+    fetch("/api/lancamentos")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(setDados)
+      .catch(() => setErro("Não foi possível carregar o lançamento."));
+
+  useEffect(() => {
+    carregar();
+  }, []);
+
+  async function enviar(e: React.FormEvent) {
+    e.preventDefault();
+    setErro("");
+    setGerando(true);
+    try {
+      const r = await fetch("/api/lancamentos", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!r.ok) throw new Error("Não foi possível salvar o briefing.");
+      const { id } = await r.json();
+      await carregar();
+      const e2 = await fetch(`/api/lancamentos/${id}/estudo`, { method: "POST" });
+      if (!e2.ok) throw new Error((await e2.json().catch(() => null))?.detail ?? "O agente de estudo falhou.");
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : "O agente de estudo falhou.");
+    }
+    await carregar();
+    setGerando(false);
+  }
+
+  if (!dados) return <p className="text-sm text-slate-500">{erro || "Carregando..."}</p>;
+  const { lancamento, estudo, custo } = dados;
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 className="font-titulo text-2xl font-medium text-grafite dark:text-white">Lançamentos</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {dados.produto} · fase 1: briefing e estudo
+          </p>
+        </div>
+        <p className={`text-xs ${custo.alerta ? "font-medium text-red-600 dark:text-red-300" : "text-slate-500 dark:text-slate-400"}`}>
+          Gasto com a Claude no mês: US$ {custo.gasto_usd.toFixed(2)} de US$ {custo.teto_usd.toFixed(0)}
+          {custo.alerta && " · acima de 80% do teto"}
+        </p>
+      </div>
+
+      {erro && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-500/15 dark:text-red-300">{erro}</p>
+      )}
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
+        <div className="space-y-6">
+          <form onSubmit={enviar} className={cartao}>
+            <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Briefing</h3>
+            <label className="mt-4 block text-sm text-slate-700 dark:text-slate-200">
+              Produto
+              <input className={campo} value={dados.produto} disabled />
+            </label>
+            <label className="mt-3 block text-sm text-slate-700 dark:text-slate-200">
+              Objetivo
+              <textarea
+                className={campo}
+                rows={3}
+                required
+                value={form.objetivo}
+                onChange={(e) => setForm({ ...form, objetivo: e.target.value })}
+              />
+            </label>
+            <label className="mt-3 block text-sm text-slate-700 dark:text-slate-200">
+              Contexto
+              <textarea className={campo} rows={3} value={form.contexto} onChange={(e) => setForm({ ...form, contexto: e.target.value })} />
+            </label>
+            <label className="mt-3 block text-sm text-slate-700 dark:text-slate-200">
+              Provas
+              <textarea className={campo} rows={2} value={form.provas} onChange={(e) => setForm({ ...form, provas: e.target.value })} />
+            </label>
+            <label className="mt-3 block text-sm text-slate-700 dark:text-slate-200">
+              Prazo (dias)
+              <input
+                className={campo}
+                type="number"
+                min={1}
+                max={365}
+                value={form.prazo_dias}
+                onChange={(e) => setForm({ ...form, prazo_dias: Number(e.target.value) })}
+              />
+            </label>
+            <button
+              type="submit"
+              disabled={gerando}
+              className="mt-5 w-full rounded-md bg-laranja px-4 py-2 text-sm font-medium text-white hover:bg-laranja-escuro disabled:opacity-60"
+            >
+              {gerando ? "Gerando o estudo..." : "Enviar ao agente de estudo"}
+            </button>
+          </form>
+
+          <div className={cartao}>
+            <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Fontes</h3>
+            <div className="mt-3">
+              <Fontes gerando={gerando} fontes={estudo?.content.fontes} />
+            </div>
+          </div>
+        </div>
+
+        <div className={cartao}>
+          {estudo ? (
+            <>
+              <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Estudo</h3>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {estudo.status} · {new Date(estudo.created_at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+                </span>
+              </div>
+              {lancamento && (
+                <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">Objetivo: {lancamento.objetivo}</p>
+              )}
+              <VerEstudo estudo={estudo.content} />
+            </>
+          ) : (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {gerando ? "O agente está lendo as fontes e escrevendo o estudo." : "Preencha o briefing e envie ao agente de estudo."}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
