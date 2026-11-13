@@ -167,9 +167,13 @@ class Decisao(BaseModel):
 
 @router.post("/estudos/{estudo_id}/decisao")
 def decidir(estudo_id: int, decisao: Decisao, usuario: dict = Depends(usuario_logado)):
+    return decidir_estudo(estudo_id, decisao.acao, decisao.nota, usuario["email"])
+
+
+def decidir_estudo(estudo_id: int, acao: str, nota: str, email: str) -> dict:
     """Aprovar e ajustar (aprovar com ressalva) avançam da fase 1 para a 2; devolver volta ao agente."""
-    nota = decisao.nota.strip()
-    if decisao.acao in ("ajustar", "devolver") and not nota:
+    nota = nota.strip()
+    if acao in ("ajustar", "devolver") and not nota:
         raise HTTPException(status_code=422, detail="Escreva a nota (ajustar) ou a instrução (devolver).")
     with engine.begin() as conn:
         item = conn.execute(
@@ -184,15 +188,15 @@ def decidir(estudo_id: int, decisao: Decisao, usuario: dict = Depends(usuario_lo
             raise HTTPException(status_code=404, detail="Estudo não encontrado na fila de aprovação.")
         if item["status"] != "pendente":
             raise HTTPException(status_code=409, detail="Este estudo já foi decidido.")
-        status_aprovacao = {"aprovar": "aprovado", "ajustar": "ajustado", "devolver": "devolvido"}[decisao.acao]
+        status_aprovacao = {"aprovar": "aprovado", "ajustar": "ajustado", "devolver": "devolvido"}[acao]
         conn.execute(
             text(
                 """update approvals set status = :st, note = :nota, decided_by = :email, decided_at = now()
                    where id = :id"""
             ),
-            {"st": status_aprovacao, "nota": nota or None, "email": usuario["email"], "id": item["aprovacao_id"]},
+            {"st": status_aprovacao, "nota": nota or None, "email": email, "id": item["aprovacao_id"]},
         )
-        if decisao.acao == "devolver":
+        if acao == "devolver":
             conn.execute(text("update studies set status = 'devolvido' where id = :id"), {"id": estudo_id})
             return {"status": status_aprovacao, "fase": 1}
         conn.execute(text("update studies set status = 'aprovado' where id = :id"), {"id": estudo_id})
