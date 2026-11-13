@@ -4,6 +4,26 @@ Aplicação da Operação GTM Jump. Leia `CLAUDE.md` e `docs/` antes de mexer.
 
 - `api/`: FastAPI, Alembic e pytest.
 - `web/`: React, Vite, TypeScript e Tailwind.
+- No ar: https://cockpit.jump.tec.br (login com conta Microsoft da Jump).
+
+## O que o cockpit faz (marco 1)
+
+| Página | O que tem |
+| --- | --- |
+| Contas | Contas do ICP Jump por GTM Score, dossiê e "Validar lista da semana" |
+| Lançamentos | Briefing, agente de estudo (fase 1), aprovação do estudo e geração do contrato |
+| Contrato de GTM | 10 cláusulas com auditoria, edição por cláusula, plano de testes, aprovação e versões |
+| Aprovações | Fila única do que espera decisão e histórico de quem decidiu e quando |
+
+Toda decisão vai para `approvals`, toda passagem de fase para `gate_events` e toda chamada de agente para `agent_log`.
+
+### Modo simulação
+Enquanto as integrações não são liberadas, o cockpit roda com dados de exemplo:
+- `ICP_JUMP_MODE=fixture`: 6 contas fictícias em `api/fixtures/icp-jump-contas.json` (a página Contas mostra uma faixa de aviso).
+- `MARTECH_MODE=fixture`: fotografia real do martech-monitor em `api/fixtures/martech-monitor.json`.
+- Sem `ANTHROPIC_API_KEY`, os agentes respondem que a chave não foi configurada.
+
+As variáveis estão em `.env.example`; a documentação da operação, em `docs/README.md`.
 
 ## Rodar local
 
