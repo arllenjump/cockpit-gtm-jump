@@ -10,6 +10,7 @@ Aplicação própria da Operação GTM Jump, separada do AdView. O AdView contin
 5. `04-agentes.md`: agente de estudo, agente de contrato e auditoria.
 6. `05-telas.md`: identidade visual e telas. Ainda não existe; a identidade aplicada vem do Figma "Identidade Jump" (cores grafite e laranja, Kanit nos títulos, logo).
 7. `06-plano.md`: etapas de construção, cada uma com sua verificação.
+8. `07-marco-2.md`: rascunho do marco 2 (copys, artes e ativação), ainda em discussão.
 
 ## Referências visuais
 - Demonstração animada do cockpit (conceito com dados fictícios): https://claude.ai/artifact/2o1yJMoccGTNyTKf1pDY7b
