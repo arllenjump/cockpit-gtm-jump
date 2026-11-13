@@ -157,7 +157,7 @@ def chamar_claude(mensagens: list[dict], modelo: str):
     )
 
 
-def gerar(briefing: dict, produto: str, registrar) -> dict:
+def gerar(briefing: dict, produto: str, registrar, instrucao: str | None = None) -> dict:
     """Gera o estudo. `registrar(resposta, modelo, tentativa, problemas)` grava cada chamada em agent_log.
 
     Faz uma nova tentativa se o JSON ou a checagem falhar; na segunda falha levanta EstudoInvalido.
@@ -171,6 +171,9 @@ def gerar(briefing: dict, produto: str, registrar) -> dict:
         "fontes_ausentes": fontes["ausentes"],
         "dados": dados,
     }
+    if instrucao:
+        # Estudo anterior devolvido pelo marketing: a instrução orienta a nova versão.
+        entrada["instrucao_do_marketing"] = instrucao
     entrada_json = json.dumps(entrada, ensure_ascii=False)
     corpus = SISTEMA + "\n" + entrada_json
     mensagens = [{"role": "user", "content": f"Gere o estudo da fase 1 para este lançamento.\n\n{entrada_json}"}]

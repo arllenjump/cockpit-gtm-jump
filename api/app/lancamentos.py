@@ -1,5 +1,6 @@
 """Página Lançamentos (etapa 8): briefing e estudo da fase 1."""
 import json
+from typing import Literal
 
 import anthropic
 from fastapi import APIRouter, Depends, HTTPException
@@ -48,7 +49,12 @@ def atual():
         estudo = None
         if lancamento:
             estudo = conn.execute(
-                text("select id, content, sources, status, created_at from studies where launch_id = :l order by id desc limit 1"),
+                text(
+                    """select s.id, s.content, s.sources, s.status, s.created_at,
+                              a.status as aprovacao, a.note as nota, a.decided_by, a.decided_at
+                       from studies s left join approvals a on a.item_type = 'estudo' and a.item_id = s.id
+                       where s.launch_id = :l order by s.id desc limit 1"""
+                ),
                 {"l": lancamento["id"]},
             ).mappings().first()
         return {
@@ -90,6 +96,16 @@ def gerar_estudo(lancamento_id: int):
     if not b:
         raise HTTPException(status_code=404, detail="Lançamento sem briefing.")
     briefing = {k: b[k] for k in ("objetivo", "contexto", "provas", "prazo_dias")}
+    with engine.connect() as conn:
+        instrucao = conn.execute(
+            text(
+                """select a.note from studies s join approvals a on a.item_type = 'estudo' and a.item_id = s.id
+                   where s.launch_id = :l and s.status = 'devolvido'
+                     and s.id = (select max(id) from studies where launch_id = :l)
+                   order by a.id desc limit 1"""
+            ),
+            {"l": lancamento_id},
+        ).scalar()
     logs: list[int] = []
 
     def registrar(resposta, modelo, tentativa, problemas):
@@ -117,7 +133,7 @@ def gerar_estudo(lancamento_id: int):
             )
 
     try:
-        resultado = agente.gerar(briefing, "OPT-3", registrar)
+        resultado = agente.gerar(briefing, "OPT-3", registrar, instrucao)
     except agente.EstudoInvalido as erro:
         raise HTTPException(status_code=422, detail=f"O estudo não passou na checagem depois de duas tentativas: {erro}")
     except anthropic.APIError as erro:
@@ -133,4 +149,59 @@ def gerar_estudo(lancamento_id: int):
             text("update agent_log set output_ref = output_ref || cast(:o as jsonb) where id = :id"),
             {"o": json.dumps({"study_id": estudo_id}), "id": logs[-1]},
         )
+        # Fila de aprovação: o estudo só avança com decisão humana (etapa 9).
+        conn.execute(
+            text(
+                """insert into approvals (item_type, item_id, phase, summary)
+                   values ('estudo', :id, 1, :resumo)"""
+            ),
+            {"id": estudo_id, "resumo": f"Estudo da fase 1 do OPT-3 (lançamento {lancamento_id})"},
+        )
     return {"id": estudo_id, **resultado}
+
+
+class Decisao(BaseModel):
+    acao: Literal["aprovar", "ajustar", "devolver"]
+    nota: str = ""
+
+
+@router.post("/estudos/{estudo_id}/decisao")
+def decidir(estudo_id: int, decisao: Decisao, usuario: dict = Depends(usuario_logado)):
+    """Aprovar e ajustar (aprovar com ressalva) avançam da fase 1 para a 2; devolver volta ao agente."""
+    nota = decisao.nota.strip()
+    if decisao.acao in ("ajustar", "devolver") and not nota:
+        raise HTTPException(status_code=422, detail="Escreva a nota (ajustar) ou a instrução (devolver).")
+    with engine.begin() as conn:
+        item = conn.execute(
+            text(
+                """select a.id as aprovacao_id, a.status, s.launch_id, l.product_id, l.started_at
+                   from approvals a join studies s on s.id = a.item_id join launches l on l.id = s.launch_id
+                   where a.item_type = 'estudo' and a.item_id = :id for update of a"""
+            ),
+            {"id": estudo_id},
+        ).mappings().first()
+        if not item:
+            raise HTTPException(status_code=404, detail="Estudo não encontrado na fila de aprovação.")
+        if item["status"] != "pendente":
+            raise HTTPException(status_code=409, detail="Este estudo já foi decidido.")
+        status_aprovacao = {"aprovar": "aprovado", "ajustar": "ajustado", "devolver": "devolvido"}[decisao.acao]
+        conn.execute(
+            text(
+                """update approvals set status = :st, note = :nota, decided_by = :email, decided_at = now()
+                   where id = :id"""
+            ),
+            {"st": status_aprovacao, "nota": nota or None, "email": usuario["email"], "id": item["aprovacao_id"]},
+        )
+        if decisao.acao == "devolver":
+            conn.execute(text("update studies set status = 'devolvido' where id = :id"), {"id": estudo_id})
+            return {"status": status_aprovacao, "fase": 1}
+        conn.execute(text("update studies set status = 'aprovado' where id = :id"), {"id": estudo_id})
+        conn.execute(text("update launches set phase = 2 where id = :id"), {"id": item["launch_id"]})
+        conn.execute(
+            text(
+                """insert into gate_events (product_id, launch_id, from_phase, to_phase, advanced, entered_at)
+                   values (:p, :l, 1, 2, true, :entrou)"""
+            ),
+            {"p": item["product_id"], "l": item["launch_id"], "entrou": item["started_at"]},
+        )
+    return {"status": status_aprovacao, "fase": 2}
