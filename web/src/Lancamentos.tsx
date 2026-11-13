@@ -20,7 +20,16 @@ type Dados = {
     provas: string;
     prazo_dias: number;
   };
-  estudo: null | { id: number; content: Estudo; status: string; created_at: string };
+  estudo: null | {
+    id: number;
+    content: Estudo;
+    status: string;
+    created_at: string;
+    aprovacao: "pendente" | "aprovado" | "ajustado" | "devolvido" | null;
+    nota: string | null;
+    decided_by: string | null;
+    decided_at: string | null;
+  };
   custo: { gasto_usd: number; teto_usd: number; alerta: boolean };
 };
 
@@ -115,6 +124,99 @@ function Fontes({ gerando, fontes }: { gerando: boolean; fontes?: Estudo["fontes
   );
 }
 
+const dataHora = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+
+function Decisao({
+  estudo,
+  aoDecidir,
+  aoRefazer,
+  ocupado,
+}: {
+  estudo: NonNullable<Dados["estudo"]>;
+  aoDecidir: (acao: "aprovar" | "ajustar" | "devolver", nota: string) => void;
+  aoRefazer: () => void;
+  ocupado: boolean;
+}) {
+  const [nota, setNota] = useState("");
+
+  if (estudo.aprovacao === "pendente") {
+    return (
+      <div className="mt-8 border-t border-slate-200 pt-6 dark:border-white/10">
+        <h4 className={titulo}>Sua decisão</h4>
+        <textarea
+          className={campo}
+          rows={2}
+          placeholder="Nota para aprovar com ressalva, ou instrução para o agente refazer"
+          value={nota}
+          onChange={(e) => setNota(e.target.value)}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            disabled={ocupado}
+            onClick={() => aoDecidir("aprovar", nota)}
+            className="rounded-md bg-laranja px-4 py-2 text-sm font-medium text-white hover:bg-laranja-escuro disabled:opacity-60"
+          >
+            Aprovar
+          </button>
+          <button
+            disabled={ocupado || !nota.trim()}
+            onClick={() => aoDecidir("ajustar", nota)}
+            className="rounded-md border border-laranja px-4 py-2 text-sm font-medium text-laranja-escuro hover:bg-orange-50 disabled:opacity-40 dark:text-laranja-claro dark:hover:bg-laranja/10"
+          >
+            Aprovar com ressalva
+          </button>
+          <button
+            disabled={ocupado || !nota.trim()}
+            onClick={() => aoDecidir("devolver", nota)}
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/5"
+          >
+            Devolver ao agente
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+          Aprovar ou aprovar com ressalva leva o lançamento para a fase 2. Devolver pede uma nova versão do estudo.
+        </p>
+      </div>
+    );
+  }
+
+  if (!estudo.aprovacao || !estudo.decided_by || !estudo.decided_at) return null;
+  const textos = {
+    aprovado: "Aprovado",
+    ajustado: "Aprovado com ressalva",
+    devolvido: "Devolvido ao agente",
+  } as const;
+  const devolvido = estudo.aprovacao === "devolvido";
+  return (
+    <div className="mt-8 border-t border-slate-200 pt-6 dark:border-white/10">
+      <p
+        className={`rounded-md px-3 py-2 text-sm ${
+          devolvido
+            ? "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200"
+            : "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300"
+        }`}
+      >
+        {textos[estudo.aprovacao]} por {estudo.decided_by} em {dataHora(estudo.decided_at)}
+        {!devolvido && " · lançamento na fase 2"}
+      </p>
+      {estudo.nota && (
+        <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">
+          {devolvido ? "Instrução" : "Ressalva"}: {estudo.nota}
+        </p>
+      )}
+      {devolvido && (
+        <button
+          disabled={ocupado}
+          onClick={aoRefazer}
+          className="mt-3 rounded-md bg-laranja px-4 py-2 text-sm font-medium text-white hover:bg-laranja-escuro disabled:opacity-60"
+        >
+          {ocupado ? "Refazendo..." : "Refazer o estudo com a instrução"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function Lancamentos() {
   const [dados, setDados] = useState<Dados | null>(null);
   const [form, setForm] = useState({ objetivo: "", contexto: "", provas: "", prazo_dias: 42 });
@@ -153,6 +255,30 @@ export default function Lancamentos() {
     setGerando(false);
   }
 
+  async function decidir(acao: "aprovar" | "ajustar" | "devolver", nota: string) {
+    if (!dados?.estudo) return;
+    setErro("");
+    setGerando(true);
+    const r = await fetch(`/api/lancamentos/estudos/${dados.estudo.id}/decisao`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ acao, nota }),
+    });
+    if (!r.ok) setErro((await r.json().catch(() => null))?.detail ?? "Não foi possível registrar a decisão.");
+    await carregar();
+    setGerando(false);
+  }
+
+  async function refazer() {
+    if (!dados?.lancamento) return;
+    setErro("");
+    setGerando(true);
+    const r = await fetch(`/api/lancamentos/${dados.lancamento.id}/estudo`, { method: "POST" });
+    if (!r.ok) setErro((await r.json().catch(() => null))?.detail ?? "O agente de estudo falhou.");
+    await carregar();
+    setGerando(false);
+  }
+
   if (!dados) return <p className="text-sm text-slate-500">{erro || "Carregando..."}</p>;
   const { lancamento, estudo, custo } = dados;
 
@@ -162,7 +288,7 @@ export default function Lancamentos() {
         <div>
           <h2 className="font-titulo text-2xl font-medium text-grafite dark:text-white">Lançamentos</h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {dados.produto} · fase 1: briefing e estudo
+            {dados.produto} · {lancamento && lancamento.phase >= 2 ? "fase 2: criação do GTM" : "fase 1: briefing e estudo"}
           </p>
         </div>
         <p className={`text-xs ${custo.alerta ? "font-medium text-red-600 dark:text-red-300" : "text-slate-500 dark:text-slate-400"}`}>
@@ -235,13 +361,14 @@ export default function Lancamentos() {
               <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="font-titulo text-lg font-medium text-grafite dark:text-white">Estudo</h3>
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {estudo.status} · {new Date(estudo.created_at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+                  {estudo.status} · {dataHora(estudo.created_at)}
                 </span>
               </div>
               {lancamento && (
                 <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">Objetivo: {lancamento.objetivo}</p>
               )}
               <VerEstudo estudo={estudo.content} />
+              <Decisao estudo={estudo} aoDecidir={decidir} aoRefazer={refazer} ocupado={gerando} />
             </>
           ) : (
             <p className="text-sm text-slate-500 dark:text-slate-400">
