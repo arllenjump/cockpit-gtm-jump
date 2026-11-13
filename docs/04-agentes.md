@@ -60,5 +60,15 @@ Duas camadas.
 6. Conteúdo de avaliação (business case, comparativo, compliance) marcado como atrás de formulário: `ajustar`.
 7. Mais de 2 testes ativos: `conflito`.
 
+Como as regras são aplicadas (`api/app/auditoria.py`, aprovado em 13/11/2026):
+- Regra 1 também vale para cláusula ausente.
+- Regra 2 pega travessão (—) e meia-risca (–); hífen comum não.
+- Regra 3 usa a lista da variável `BLOCKED_CLIENT_NAMES` (nomes separados por ponto e vírgula), ignorando maiúsculas e acentos e só com a palavra inteira. A nota não repete o nome.
+- Regra 4: a execução da cláusula `sucesso` precisa citar alguma métrica "por conta".
+- Regra 5: produtos de nova categoria são `radarai` e `adoption-ai` (slug em `products`).
+- Regra 6: a mesma cláusula fala de business case, comparativo ou compliance e de formulário, cadastro, "gated" ou "atrás de".
+- Regra 7: o conflito fica na cláusula `sucesso`.
+- Se mais de uma regra disparar, vale a mais grave (conflito, ajustar, alinhado) e as notas se somam.
+
 ### Camada 2: auditoria por IA, opcional
 Lê o contrato inteiro e aponta incoerências entre cláusulas (por exemplo, público diferente do ICP, ou KPI que não mede a hipótese). Devolve veredito e nota por cláusula. Nunca sobrescreve um `conflito` da camada 1.
