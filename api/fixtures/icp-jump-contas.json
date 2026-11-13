@@ -46,8 +46,8 @@
       ],
       "dossier": {
         "why_now": "O gasto com nuvem e IA passou do orçamento e a empresa criou um comitê de custos. A vaga de Head de FinOps mostra que procuram um dono para o tema.",
-        "why_us": "O OPT-3 entrega a CFO e CTO o mesmo número de custo, por time, projeto e caso de uso, em vez de um painel para cada área. A Jump é AWS Partner e tem certificação ISO 27001.",
-        "suggested_approach": "Pedir uma conversa conjunta com CFO e CTO. Propor a fase Crawl do OPT-3, com os primeiros insights já no onboarding, e montar com eles a conta de ROI: gasto, percentual de desperdício e percentual de recuperação.",
+        "why_us": "O OPT-3 entrega a CFO e CTO o mesmo número de custo, por time, projeto e caso de uso, em vez de um painel para cada área. Tem ROI documentado de até 61% em otimização de custo, medido com baseline. A Jump é AWS Partner e tem certificação ISO 27001.",
+        "suggested_approach": "Pedir uma conversa conjunta com CFO e CTO. Propor a fase Crawl do OPT-3, com os primeiros insights em 10 dias de onboarding, e montar com eles a conta de ROI: gasto, percentual de desperdício e percentual de recuperação.",
         "risks": [
           "Podem estar avaliando outra ferramenta de FinOps de mercado",
           "O comitê pode buscar só um corte pontual, sem prática contínua"
@@ -232,8 +232,8 @@
       ],
       "dossier": {
         "why_now": "Um CFO novo costuma revisar contratos e custos nos primeiros meses, e a fatura de nuvem é uma das primeiras a ser questionada.",
-        "why_us": "O OPT-3 entrega ao financeiro a clareza que a fatura do provedor não dá. A Jump ganhou o prêmio Negócios em Expansão 2025 da Exame.",
-        "suggested_approach": "Oferecer ao novo CFO um diagnóstico de desperdício em nuvem, com a conta de ROI feita sobre os dados da própria empresa.",
+        "why_us": "O OPT-3 entrega ao financeiro a clareza que a fatura do provedor não dá, com primeiros insights em 10 dias de onboarding. A Jump ganhou o prêmio Negócios em Expansão 2025 da Exame.",
+        "suggested_approach": "Oferecer ao novo CFO um diagnóstico de desperdício em nuvem, com a conta de ROI feita sobre os dados da própria empresa. Usar o ROI documentado de até 61% como referência, deixando claro que o número do caso dele sai do baseline.",
         "risks": [
           "Porte menor: o gasto em nuvem pode não justificar o projeto agora",
           "Usa uma nuvem só, o que reduz o ganho da visão unificada"

@@ -3,7 +3,7 @@
 ## Regras comuns a todos os agentes
 - Português do Brasil.
 - Nunca usar travessão (—).
-- Nunca citar nome de cliente da Jump. Provas permitidas: mais de 60 clientes, mais de 600 profissionais, ISO 27001, 27701, 42001, 9001 e 14001, prêmio Negócios em Expansão 2025 da Exame, AWS Partner Network.
+- Nunca citar nome de cliente da Jump. Provas permitidas: mais de 60 clientes, mais de 600 profissionais, ISO 27001, 27701, 42001, 9001 e 14001, prêmio Negócios em Expansão 2025 da Exame, AWS Partner Network. Só ao falar do OPT-3: ROI documentado de até 61% em otimização de custo (cerca de 36% já formalizado, medido com baseline caso a caso) e primeiros insights em 10 dias de onboarding.
 - Não inventar números, nomes de clientes ou ferramentas. Quando faltar dado, dizer que falta.
 - Saída sempre em JSON no formato pedido, sem texto fora dele.
 
